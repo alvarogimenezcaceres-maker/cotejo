@@ -1,0 +1,12 @@
+# Clasificación de medios de Cotejo (eje editorial, no izquierda-derecha).
+# Criterios (ver docs/metodologia.md): propiedad, vínculos, línea editorial, rectificaciones.
+# Valores de tipo: oficialismo | independiente | critico | publico | fuente_primaria
+# revisado: false = clasificación PROVISIONAL, sin documentar con evidencia. No se publica hasta revisarla.
+media:
+  abc-color:     {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y línea editorial."}
+  hoy:           {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
+  diario-popular: {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
+  paraguay-com:  {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
+  el-nacional:   {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
+  adn-digital:   {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
+  la-clave:      {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
