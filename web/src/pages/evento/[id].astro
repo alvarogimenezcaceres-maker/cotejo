@@ -1,0 +1,77 @@
+---
+import Base from '../../layouts/Base.astro';
+import { cargarEventos, fmt, TIPOS } from '../../lib/db.js';
+export async function getStaticPaths() {
+  const { eventos, tiposActivos } = await cargarEventos();
+  return eventos.map((e) => ({ params: { id: String(e.id) }, props: { e, tiposActivos } }));
+}
+const { e, tiposActivos } = Astro.props;
+const porMedio = new Map();
+for (const n of e.notas) (porMedio.get(n.slug) ?? porMedio.set(n.slug, []).get(n.slug)).push(n);
+const reportUrl = import.meta.env.PUBLIC_REPORT_URL;
+---
+<Base title={`${e.title} · Cotejo`}>
+  <p><a href="/" class="etq">← Todos los hechos</a></p>
+  <h1>{e.title}</h1>
+  <p class="etq">{e.medios} {e.medios === 1 ? 'medio' : 'medios'} · {e.notas.length} notas · Agrupado automáticamente</p>
+
+  {e.clasificado ? (
+    <table class="registro">
+      <caption class="etq">Cobertura por tipo de medio</caption>
+      <tbody>
+        {tiposActivos.map((t) => (
+          <tr class={e.cubiertos.includes(t) ? 'cub' : 'ciego'}>
+            <th scope="row">{TIPOS[t]}</th>
+            <td>{e.cubiertos.includes(t) ? '■ Lo cubrió' : '□ No lo cubrió'}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <p class="aviso">La clasificación de medios está en revisión; no se muestra el punto ciego de este hecho.</p>
+  )}
+
+  <p class="aviso">Sin resumen: solo titulares y enlaces. Cada nota pertenece a su medio.</p>
+
+  {[...porMedio.values()].map((notas) => (
+    <section>
+      <h2 class="etq">{notas[0].medio}{e.clasificado ? ` · ${TIPOS[notas[0].tipo]}` : ''}</h2>
+      {notas.map((n) => (
+        <article>
+          <h3><a href={n.url} rel="noopener noreferrer">{n.nota}</a></h3>
+          {n.snippet && <p>{n.snippet}</p>}
+          {n.published_at && <p class="etq">{fmt(n.published_at)}</p>}
+        </article>
+      ))}
+    </section>
+  ))}
+
+  <section class="reporte">
+    <h2 class="etq">¿Hay un error en este hecho?</h2>
+    {reportUrl ? (
+      <form method="post" action={reportUrl}>
+        <input type="hidden" name="event_id" value={e.id} />
+        <label for="msg">Cuéntanos qué está mal (notas mal agrupadas, dato incorrecto)</label>
+        <textarea id="msg" name="message" rows="4" required maxlength="1000"></textarea>
+        <button type="submit">Enviar reporte</button>
+      </form>
+    ) : (
+      <p>El formulario de reportes aún no está habilitado.</p>
+    )}
+  </section>
+</Base>
+<style>
+  h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); line-height: 1.1; margin: .5rem 0; letter-spacing: -.02em; }
+  section { border-top: 1px solid var(--regla); padding: .75rem 0 .25rem; margin-top: 1rem; }
+  section h2 { margin: 0 0 .5rem; color: var(--tinta); }
+  h3 { margin: 0 0 .15rem; font-size: 1.1rem; line-height: 1.3; }
+  article { margin-bottom: 1rem; }
+  article p { margin: 0 0 .2rem; font-size: .95rem; color: var(--gris); }
+  .registro { border-collapse: collapse; margin: 1rem 0; font: .85rem var(--mono); }
+  .registro caption { text-align: left; padding-bottom: .4rem; }
+  .registro th, .registro td { text-align: left; font-weight: 400; padding: .25rem 1.5rem .25rem 0; border-top: 1px solid var(--regla); }
+  .ciego td { color: var(--acento); font-weight: 700; }
+  label { display: block; margin-bottom: .3rem; font-size: .95rem; }
+  textarea { width: 100%; background: transparent; color: inherit; border: 1px solid var(--tinta); font: inherit; padding: .5rem; }
+  button { margin-top: .5rem; background: var(--tinta); color: var(--papel); border: 0; padding: .6rem 1.1rem; font: .8rem var(--mono); text-transform: uppercase; letter-spacing: .06em; cursor: pointer; min-height: 44px; }
+</style>

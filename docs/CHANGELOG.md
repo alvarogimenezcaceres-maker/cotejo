@@ -6,3 +6,5 @@
 - 2026-10-17: Esquema aplicado en Docker (6 tablas, pgvector 0.8.7). Puerto host 5433 porque el 5432 lo ocupa otro PostgreSQL local.
 - 2026-10-17: ingest/ingest.py (RSS -> título, fragmento <=300, enlace, fecha; robots.txt y pausa 2 s) y sources/media.yaml (clasificación provisional). Primera carga: 272 notas de 5 medios.
 - 2026-10-17: ingest/cluster.py: embeddings (fastembed, paraphrase-multilingual-MiniLM-L12-v2, 384 dim) y agrupación por similitud coseno (umbral 0.75, ventana 3 días). Calcula tipos cubiertos y punto ciego.
+- 2026-10-17: Sitio Astro (web/): portada con hechos de 2+ notas, página por evento con titulares y enlaces, registro de cobertura y punto ciego, formulario de reporte (activo con PUBLIC_REPORT_URL). Estilo editorial sobrio, fuentes del sistema.
+- 2026-10-17: ingest/unpublish.py: despublicar/republicar un evento (el sitio lo omite en el próximo build).

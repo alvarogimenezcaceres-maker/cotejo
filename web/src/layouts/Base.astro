@@ -1,0 +1,45 @@
+---
+const { title = 'Cotejo' } = Astro.props;
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content="Cómo cubrió cada medio de Paraguay un mismo hecho, y quién no lo cubrió." />
+  </head>
+  <body>
+    <header class="mast">
+      <a href="/" class="logo">Cotejo</a>
+      <p class="lema">Un mismo hecho, contado por cada medio.</p>
+    </header>
+    <main><slot /></main>
+    <footer class="pie">
+      <p>Cotejo guarda solo titular, un fragmento breve, enlace y fecha. El texto completo está en cada medio.
+      La agrupación por hecho es automática y puede equivocarse. Código abierto (AGPL-3.0).</p>
+    </footer>
+  </body>
+</html>
+<style is:global>
+  :root {
+    --papel: #f3efe4; --tinta: #1b1a17; --gris: #5c584d; --regla: #cfc8b4; --acento: #b2331d;
+    --serif: "Iowan Old Style", "Palatino Linotype", Charter, Georgia, serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --papel: #17161a; --tinta: #ece7da; --gris: #a39e90; --regla: #3a3730; --acento: #ee7a62; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--papel); color: var(--tinta); font: 18px/1.55 var(--serif); }
+  main, .mast, .pie { max-width: 62rem; margin: 0 auto; padding: 0 1rem; }
+  a { color: inherit; text-decoration-color: var(--regla); text-underline-offset: .2em; }
+  a:hover { text-decoration-color: var(--acento); }
+  a:focus-visible, button:focus-visible, textarea:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
+  .mast { padding-top: 1.5rem; padding-bottom: .75rem; border-bottom: 3px double var(--tinta); display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem 1.5rem; }
+  .logo { font-size: 2.6rem; font-weight: 700; letter-spacing: -.03em; text-decoration: none; line-height: 1; }
+  .lema { margin: 0; color: var(--gris); font-style: italic; }
+  .pie { margin-top: 4rem; padding-top: 1rem; padding-bottom: 3rem; border-top: 1px solid var(--regla); color: var(--gris); font-size: .85rem; }
+  .etq { font: .72rem/1.2 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--gris); }
+  .aviso { border-left: 3px solid var(--acento); padding: .25rem 0 .25rem .75rem; color: var(--gris); font-size: .9rem; margin: 1.25rem 0; }
+</style>

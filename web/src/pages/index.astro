@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import { cargarEventos, fmt, TIPOS } from '../lib/db.js';
+const { eventos, tiposActivos } = await cargarEventos();
+const hayClasif = eventos.some((e) => e.clasificado);
+---
+<Base>
+  <p class="aviso">
+    {hayClasif
+      ? 'Se listan hechos con al menos dos notas. El registro muestra qué tipo de medio los cubrió y cuál no.'
+      : 'La clasificación de medios está en revisión, por eso no se muestra qué tipo de medio cubrió cada hecho. Aquí solo hay titulares y enlaces.'}
+  </p>
+  <ol class="lista">
+    {eventos.map((e, i) => (
+      <li>
+        <span class="num">{String(i + 1).padStart(2, '0')}</span>
+        <div>
+          <h2><a href={`/evento/${e.id}/`}>{e.title}</a></h2>
+          <p class="etq">{e.medios} {e.medios === 1 ? 'medio' : 'medios'} · {e.notas.length} notas · {fmt(e.fecha)}</p>
+          {e.clasificado && (
+            <p class="registro" aria-label="Cobertura por tipo de medio">
+              {tiposActivos.map((t) => (
+                <span class={e.cubiertos.includes(t) ? 'cub' : 'ciego'}>
+                  {e.cubiertos.includes(t) ? '■' : '□'} {TIPOS[t]}{e.cubiertos.includes(t) ? '' : ' (no lo cubrió)'}
+                </span>
+              ))}
+            </p>
+          )}
+        </div>
+      </li>
+    ))}
+  </ol>
+  {eventos.length === 0 && <p>Todavía no hay hechos con más de una nota.</p>}
+</Base>
+<style>
+  .lista { list-style: none; margin: 0; padding: 0; columns: 2 24rem; column-gap: 2.5rem; column-rule: 1px solid var(--regla); }
+  .lista li { break-inside: avoid; display: grid; grid-template-columns: 2.4rem 1fr; padding: 1rem 0; border-bottom: 1px solid var(--regla); }
+  .num { font: .8rem var(--mono); color: var(--acento); padding-top: .55rem; }
+  h2 { margin: 0 0 .3rem; font-size: 1.3rem; line-height: 1.2; font-weight: 700; }
+  h2 a { text-decoration: none; }
+  h2 a:hover { text-decoration: underline; text-decoration-color: var(--acento); }
+  .etq { margin: 0; }
+  .registro { margin: .5rem 0 0; display: flex; flex-wrap: wrap; gap: .15rem .9rem; font: .75rem var(--mono); }
+  .cub { color: var(--tinta); }
+  .ciego { color: var(--acento); }
+</style>

@@ -3,3 +3,6 @@ __pycache__
 .env
 sources/sources.yaml
 files.zip
+node_modules
+web/dist
+web/.astro
