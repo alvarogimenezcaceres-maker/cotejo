@@ -1,0 +1,91 @@
+# Fuentes candidatas para Cotejo.
+# "feeds": URLs de RSS ya conocidas (opcional). Si no hay, el script descubre el feed desde la home.
+# "type" y "notes" son provisionales: la clasificación definitiva debe tener criterios públicos
+# (propiedad, vínculos, línea editorial, rectificaciones) y revisarse por pull request.
+
+media:
+  - id: abc-color
+    name: ABC Color
+    home: https://www.abc.com.py/
+    type: prensa-tradicional
+    feeds:
+      - https://www.abc.com.py/arc/outboundfeeds/rss/nacionales/
+      - https://www.abc.com.py/arc/outboundfeeds/rss/noticias-del-dia/
+  - id: ultima-hora
+    name: Última Hora
+    home: https://www.ultimahora.com/
+    type: prensa-tradicional
+  - id: la-nacion
+    name: La Nación
+    home: https://www.lanacion.com.py/
+    type: prensa-tradicional
+  - id: hoy
+    name: Hoy
+    home: https://www.hoy.com.py/
+    type: prensa-tradicional
+  - id: diario-popular
+    name: Diario Popular
+    home: https://www.popular.com.py/
+    type: prensa-tradicional
+    feeds:
+      - https://www.popular.com.py/feed
+  - id: paraguay-com
+    name: Paraguay.com
+    home: https://www.paraguay.com/
+    type: digital
+  - id: cronica
+    name: Crónica
+    home: https://www.cronica.com.py/
+    type: prensa-tradicional
+  - id: el-nacional
+    name: El Nacional
+    home: https://www.elnacional.com.py/
+    type: digital
+  - id: la-tribuna
+    name: La Tribuna
+    home: https://www.latribuna.com.py/
+    type: digital
+  - id: adn-digital
+    name: ADN Digital
+    home: https://www.adndigital.com.py/
+    type: digital
+  - id: la-clave
+    name: La Clave
+    home: https://www.laclave.com.py/
+    type: digital
+  - id: unicanal
+    name: Unicanal
+    home: https://www.unicanal.com.py/
+    type: tv
+  # Independientes e investigación: los dominios deben confirmarse a mano antes de ejecutar.
+  # - id: el-surtidor
+  #   name: El Surtidor
+  #   home: https://elsurti.com/
+  #   type: independiente
+  # - id: nanduti
+  #   name: Ñandutí
+  #   home: https://www.nanduti.com.py/
+  #   type: radio
+  # Públicos y oficiales (confirmar feed propio de cada institución):
+  - id: presidencia
+    name: Presidencia de la República
+    home: https://www.presidencia.gov.py/
+    type: oficial
+  - id: ip-paraguay
+    name: IP Paraguay
+    home: https://www.ip.gov.py/
+    type: publico
+
+primary_sources:
+  - id: datos-gov-py
+    name: Portal de Datos Abiertos
+    home: https://www.datos.gov.py/
+  - id: contrataciones
+    name: Contrataciones Públicas (API de datos)
+    home: https://www.contrataciones.gov.py/datos
+  - id: silpy
+    name: SILpy, Congreso
+    home: http://silpy.congreso.gov.py/
+  - id: tsje-datos
+    name: TSJE, datos abiertos
+    home: http://datosabiertos.tsje.gov.py/
