@@ -15,7 +15,7 @@ const hayClasif = eventos.some((e) => e.clasificado);
       <li>
         <span class="num">{String(i + 1).padStart(2, '0')}</span>
         <div>
-          <h2><a href={`/evento/${e.id}/`}>{e.title}</a></h2>
+          <h2><a href={`${import.meta.env.BASE_URL}/evento/${e.id}/`}>{e.title}</a></h2>
           <p class="etq">{e.medios} {e.medios === 1 ? 'medio' : 'medios'} · {e.notas.length} notas · {fmt(e.fecha)}</p>
           {e.clasificado && (
             <p class="registro" aria-label="Cobertura por tipo de medio">

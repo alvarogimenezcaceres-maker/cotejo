@@ -8,3 +8,5 @@
 - 2026-10-17: ingest/cluster.py: embeddings (fastembed, paraphrase-multilingual-MiniLM-L12-v2, 384 dim) y agrupación por similitud coseno (umbral 0.75, ventana 3 días). Calcula tipos cubiertos y punto ciego.
 - 2026-10-17: Sitio Astro (web/): portada con hechos de 2+ notas, página por evento con titulares y enlaces, registro de cobertura y punto ciego, formulario de reporte (activo con PUBLIC_REPORT_URL). Estilo editorial sobrio, fuentes del sistema.
 - 2026-10-17: ingest/unpublish.py: despublicar/republicar un evento (el sitio lo omite en el próximo build).
+- 2026-10-19: .github/workflows/cycle.yml: ciclo horario en GitHub Actions (ingesta, agrupación, build) publicado en Pages; BD en Neon vía secreto COTEJO_DB. Quita la dependencia de la compu local.
+- 2026-10-19: Astro con base '/cotejo' y enlaces vía BASE_URL, para que el sitio funcione en usuario.github.io/cotejo/.

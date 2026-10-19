@@ -1,6 +1,7 @@
 services:
   db:
     image: pgvector/pgvector:pg16
+    restart: unless-stopped
     environment:
       POSTGRES_DB: cotejo
       POSTGRES_USER: cotejo
@@ -10,6 +11,35 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cotejo -d cotejo"]
+      interval: 5s
+      retries: 10
+
+  worker:
+    build:
+      context: .
+      dockerfile: ops/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      COTEJO_DB: postgresql://cotejo:${POSTGRES_PASSWORD:-cotejo_dev}@db:5432/cotejo
+      CYCLE_SECONDS: ${CYCLE_SECONDS:-3600}
+    volumes:
+      - site:/site
+      - modelcache:/cache
+
+  web:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    volumes:
+      - site:/usr/share/nginx/html:ro
 
 volumes:
   pgdata:
+  site:
+  modelcache:

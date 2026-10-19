@@ -1,0 +1,7 @@
+.git
+.env
+files.zip
+web/node_modules
+web/dist
+web/.astro
+__pycache__

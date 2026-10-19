@@ -1,0 +1,55 @@
+# Ciclo de Cotejo en la nube: ingesta, agrupación, build de Astro y publicación en Pages.
+# La BD vive en Neon; la conexión está en el secreto COTEJO_DB.
+name: ciclo
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ciclo
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  COTEJO_DB: ${{ secrets.COTEJO_DB }}
+  FASTEMBED_CACHE_PATH: ${{ github.workspace }}/.fastembed
+
+jobs:
+  ciclo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: ingest/requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/cache@v4
+        with:
+          path: .fastembed
+          key: fastembed-minilm-l12-v2
+      - run: pip install -r ingest/requirements.txt
+      - run: python ingest/ingest.py
+      - run: python ingest/cluster.py
+      - run: npm ci && npm run build
+        working-directory: web
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+      - id: deploy
+        uses: actions/deploy-pages@v4

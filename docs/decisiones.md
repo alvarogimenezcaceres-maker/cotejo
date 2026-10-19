@@ -9,3 +9,5 @@
 - 2026-10-17: Sitio con astro y pg (únicas dependencias). Lee la BD solo al compilar; sin servidor. Diseño propio (papel, serif, acento único) en vez del hero genérico sugerido por la herramienta de diseño.
 - 2026-10-17: El tipo de medio y el punto ciego solo se muestran si todos los medios del evento tienen `revisado: true`.
 - 2026-10-17: Formulario de reportes sin endpoint todavía; se muestra solo si existe PUBLIC_REPORT_URL.
+- 2026-10-19: Despliegue en GitHub Actions + Pages con BD en Neon en vez de VPS: gratis, sin servidor que mantener y compatible con AGPL (repo público). El worker/nginx de Docker queda como opción futura.
+- 2026-10-19: Base '/cotejo' en Astro porque Pages sirve bajo subruta; con dominio propio se cambia a '/'.

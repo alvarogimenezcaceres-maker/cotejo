@@ -1,7 +1,6 @@
 __pycache__
 .venv
 .env
-sources/sources.yaml
 files.zip
 node_modules
 web/dist
