@@ -18,7 +18,8 @@ DB = os.environ.get("COTEJO_DB", "postgresql://cotejo:cotejo_dev@127.0.0.1:5433/
 
 def main(aplicar):
     temas = Temas()
-    with psycopg.connect(DB) as conn:
+    with psycopg.connect(DB, connect_timeout=30) as conn:
+        conn.execute("SET statement_timeout = '120s'")
         rows = conn.execute("SELECT id, title, snippet FROM articles").fetchall()
         fuera = [r[0] for r in rows if not temas.relevant(r[1], r[2])]
         print(f"notas: {len(rows)}; fuera de tema: {len(fuera)}")
@@ -27,6 +28,8 @@ def main(aplicar):
             return
         afectados = [r[0] for r in conn.execute(
             "SELECT DISTINCT event_id FROM event_articles WHERE article_id = ANY(%s)", (fuera,))]
+        conn.execute("CREATE INDEX IF NOT EXISTS event_articles_article_idx ON event_articles (article_id)")
+        conn.execute("DELETE FROM event_articles WHERE article_id = ANY(%s)", (fuera,))
         conn.execute("DELETE FROM articles WHERE id = ANY(%s)", (fuera,))
         vacios = conn.execute(
             "DELETE FROM events e WHERE NOT EXISTS (SELECT 1 FROM event_articles ea WHERE ea.event_id=e.id)").rowcount
