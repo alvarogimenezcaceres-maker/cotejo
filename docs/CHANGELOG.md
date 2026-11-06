@@ -10,3 +10,4 @@
 - 2026-10-17: ingest/unpublish.py: despublicar/republicar un evento (el sitio lo omite en el próximo build).
 - 2026-10-19: .github/workflows/cycle.yml: ciclo horario en GitHub Actions (ingesta, agrupación, build) publicado en Pages; BD en Neon vía secreto COTEJO_DB. Quita la dependencia de la compu local.
 - 2026-10-19: Astro con base '/cotejo' y enlaces vía BASE_URL, para que el sitio funcione en usuario.github.io/cotejo/.
+- 2026-11-06: Filtro temático al ingerir (sources/temas.yaml + ingest.py): solo política y economía de Paraguay y nexos internacionales. Enfoca el producto; descarta deportes, policiales sin vínculo político y noticias extranjeras sin vínculo con Paraguay.

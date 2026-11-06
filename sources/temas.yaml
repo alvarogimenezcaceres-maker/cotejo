@@ -1,0 +1,115 @@
+# Filtro temático de Cotejo: política y economía de Paraguay y sus nexos internacionales.
+# Se aplica a título + fragmento al ingerir (sin tildes ni mayúsculas, palabra completa).
+# Una nota se guarda si:
+#   1. contiene un término de `propios` (instituciones y actores políticos de Paraguay); o
+#   2. contiene un actor extranjero de `internacional` Y un marcador de `paraguay` (nexo); o
+#   3. no menciona actores extranjeros y contiene un término de `generales` (política/economía).
+# Una nota con actores extranjeros y sin vínculo con Paraguay se descarta.
+# Los términos son públicos a propósito: quien quiera ver qué se incluye y qué no, lo ve aquí.
+
+paraguay: [paraguay, paraguayo, paraguaya, paraguayos, paraguayas, asuncion]
+
+propios:
+  - santiago pena
+  - cartes
+  - partido colorado
+  - anr
+  - plra
+  - liberal radical
+  - tsje
+  - tribunal superior de justicia electoral
+  - ministerio publico
+  - fiscalia general
+  - contraloria general
+  - ministerio de economia
+  - ministerio de relaciones exteriores
+  - cancilleria
+  - banco central del paraguay
+  - petropar
+  - itaipu
+  - yacyreta
+  - camara de diputados
+  - camara de senadores
+  - congreso nacional
+  - poder ejecutivo
+  - mburuvicha rora
+  - palacio de lopez
+
+generales:
+  - gobierno
+  - presidente
+  - ministro
+  - ministra
+  - senado
+  - senador
+  - senadora
+  - diputado
+  - diputada
+  - congreso
+  - parlamento
+  - elecciones
+  - candidato
+  - candidata
+  - intendente
+  - gobernador
+  - oposicion
+  - oficialismo
+  - presupuesto
+  - impuestos
+  - reforma
+  - ley
+  - economia
+  - inflacion
+  - dolar
+  - deuda
+  - exportaciones
+  - importaciones
+  - soja
+  - carne
+  - inversion
+  - pib
+  - tarifa
+  - arancel
+  - dnit
+  - productores
+  - ganaderos
+  - comerciantes
+  - banco
+  - precios
+  - salario
+  - empleo
+  - fiscal
+  - fiscalia
+  - corrupcion
+  - juicio politico
+  - lavado
+
+internacional:
+  - mercosur
+  - brasil
+  - argentina
+  - uruguay
+  - bolivia
+  - chile
+  - estados unidos
+  - eeuu
+  - ee.uu
+  - trump
+  - biden
+  - milei
+  - lula
+  - maduro
+  - putin
+  - taiwan
+  - china
+  - union europea
+  - onu
+  - oea
+  - fmi
+  - banco mundial
+  - bid
+  - embajador
+  - embajada
+  - tratado
+  - acuerdo comercial
+  - hidrovia

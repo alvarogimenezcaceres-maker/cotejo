@@ -14,3 +14,9 @@
 - Solo hechos con al menos dos notas. Sin resumen: titulares, fragmentos y enlaces a cada medio.
 - La agrupación por hecho es automática (similitud de texto) y puede equivocarse; cada hecho dice que fue agrupado automáticamente.
 - Un evento se puede despublicar de inmediato si alguien reporta un error.
+
+## Qué temas cubre Cotejo
+Cotejo se centra en la política y la economía de Paraguay y en sus relaciones con otros países y organismos (Mercosur, Brasil, Argentina, Estados Unidos, Taiwán, China, Itaipú, entre otros).
+Al recolectar, una nota se guarda solo si su título o fragmento menciona instituciones o actores políticos de Paraguay, o temas generales de política y economía. Las noticias sobre otros países se guardan únicamente si también mencionan a Paraguay.
+La lista completa de palabras está en `sources/temas.yaml` y es pública. El filtro es simple y puede dejar pasar o perder alguna nota; si detectas un error, repórtalo y se ajusta la lista.
+Este filtro decide qué se recolecta. No cambia las reglas de neutralidad: los hechos sobre denuncias, acusaciones o candidatos se muestran solo con titulares y enlaces, sin resumen generado.

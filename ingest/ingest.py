@@ -1,6 +1,7 @@
 """Ingesta de Cotejo: lee los RSS de sources/ y guarda título, fragmento (<=300), enlace y fecha.
 
 Hace: respeta robots.txt, pausa de 2 s por sitio, user-agent propio, inserta sin duplicar.
+Filtra por tema (sources/temas.yaml): solo política y economía de Paraguay y sus nexos internacionales.
 No hace: no descarga el texto completo de las notas, no agrupa ni resume, no hace scraping.
 
 Uso: py ingest/ingest.py   (BD: variable COTEJO_DB, por defecto localhost:5433)
@@ -9,6 +10,7 @@ import html
 import os
 import re
 import time
+import unicodedata
 from calendar import timegm
 from datetime import datetime, timezone
 from pathlib import Path
@@ -33,6 +35,31 @@ def snippet(entry):
     return text[:300] or None
 
 
+def norm(text):
+    t = unicodedata.normalize("NFD", text.lower())
+    return "".join(c for c in t if unicodedata.category(c) != "Mn")
+
+
+def term_regex(terms):
+    return re.compile(r"\b(?:" + "|".join(re.escape(norm(t)) for t in terms) + r")\b")
+
+
+def topic_filter():
+    t = yaml.safe_load((ROOT / "sources/temas.yaml").read_text(encoding="utf-8"))
+    py, own = term_regex(t["paraguay"]), term_regex(t["propios"])
+    gen, foreign = term_regex(t["generales"]), term_regex(t["internacional"])
+
+    def relevant(title, snip):
+        text = norm(f"{title} {snip or ''}")
+        if own.search(text):
+            return True
+        if foreign.search(text):
+            return bool(py.search(text))
+        return bool(gen.search(text))
+
+    return relevant
+
+
 def published(entry):
     t = entry.get("published_parsed") or entry.get("updated_parsed")
     return datetime.fromtimestamp(timegm(t), timezone.utc) if t else None
@@ -54,6 +81,7 @@ def allowed(url, cache):
 def main():
     srcs = yaml.safe_load((ROOT / "sources/sources.yaml").read_text(encoding="utf-8"))["media"]
     cls = yaml.safe_load((ROOT / "sources/media.yaml").read_text(encoding="utf-8"))["media"]
+    relevant = topic_filter()
     robots = {}
     with psycopg.connect(DB) as conn:
         for m in srcs:
@@ -66,7 +94,7 @@ def main():
                    RETURNING id""",
                 (m["id"], m["name"], cls[m["id"]]["tipo"], feeds[0]),
             ).fetchone()
-            sid, new = row[0], 0
+            sid, new, skipped = row[0], 0, 0
             for url in feeds:
                 if not allowed(url, robots):
                     print(f"{m['id']}: robots.txt bloquea {url}")
@@ -81,12 +109,15 @@ def main():
                 for e in feedparser.parse(r.content).entries:
                     if not e.get("link") or not e.get("title"):
                         continue
+                    if not relevant(e.title, snippet(e)):
+                        skipped += 1
+                        continue
                     new += conn.execute(
                         """INSERT INTO articles (source_id, url, title, snippet, published_at)
                            VALUES (%s,%s,%s,%s,%s) ON CONFLICT (url) DO NOTHING""",
                         (sid, e.link, e.title.strip(), snippet(e), published(e)),
                     ).rowcount
-            print(f"{m['id']}: {new} nuevas")
+            print(f"{m['id']}: {new} nuevas, {skipped} fuera de tema")
 
 
 if __name__ == "__main__":

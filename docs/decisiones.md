@@ -11,3 +11,4 @@
 - 2026-10-17: Formulario de reportes sin endpoint todavía; se muestra solo si existe PUBLIC_REPORT_URL.
 - 2026-10-19: Despliegue en GitHub Actions + Pages con BD en Neon en vez de VPS: gratis, sin servidor que mantener y compatible con AGPL (repo público). El worker/nginx de Docker queda como opción futura.
 - 2026-10-19: Base '/cotejo' en Astro porque Pages sirve bajo subruta; con dominio propio se cambia a '/'.
+- 2026-11-06: Enfoque editorial: política y economía de Paraguay y sus nexos internacionales. Filtro por palabras clave al ingerir (no al mostrar) para mantener chica la BD y el cómputo; lista pública en sources/temas.yaml. Se descartan noticias internacionales sin vínculo con Paraguay. Limitación: las palabras clave dejan pasar o pierden algunas notas; se afina revisando la lista, no con un modelo opaco. Las notas previas al filtro no se depuran.
