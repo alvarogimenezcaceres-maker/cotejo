@@ -8,6 +8,7 @@ Uso: py ingest/purge_offtopic.py [--aplicar]   (BD: variable COTEJO_DB)
 """
 import os
 import sys
+import time
 
 import psycopg
 
@@ -16,23 +17,36 @@ from temas import Temas
 DB = os.environ.get("COTEJO_DB", "postgresql://cotejo:cotejo_dev@127.0.0.1:5433/cotejo")
 
 
+def paso(msg):
+    print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
+
+
 def main(aplicar):
     temas = Temas()
     with psycopg.connect(DB, connect_timeout=30) as conn:
         conn.execute("SET statement_timeout = '120s'")
+        paso("conectado")
+        otras = conn.execute(
+            "SELECT count(*) FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid() "
+            "AND state LIKE 'idle in transaction%%'").fetchone()[0]
+        paso(f"sesiones 'idle in transaction' ajenas: {otras}")
         rows = conn.execute("SELECT id, title, snippet FROM articles").fetchall()
         fuera = [r[0] for r in rows if not temas.relevant(r[1], r[2])]
-        print(f"notas: {len(rows)}; fuera de tema: {len(fuera)}")
+        paso(f"notas: {len(rows)}; fuera de tema: {len(fuera)}")
         if not aplicar or not fuera:
             print("sin cambios" if not aplicar else "nada que borrar")
             return
         afectados = [r[0] for r in conn.execute(
             "SELECT DISTINCT event_id FROM event_articles WHERE article_id = ANY(%s)", (fuera,))]
+        paso(f"hechos afectados: {len(afectados)}")
         conn.execute("CREATE INDEX IF NOT EXISTS event_articles_article_idx ON event_articles (article_id)")
+        paso("índice listo")
         conn.execute("DELETE FROM event_articles WHERE article_id = ANY(%s)", (fuera,))
+        paso("enlaces borrados")
         conn.execute("DELETE FROM articles WHERE id = ANY(%s)", (fuera,))
         vacios = conn.execute(
             "DELETE FROM events e WHERE NOT EXISTS (SELECT 1 FROM event_articles ea WHERE ea.event_id=e.id)").rowcount
+        paso("notas y hechos vacíos borrados")
         all_types = {r[0] for r in conn.execute("SELECT DISTINCT tipo FROM sources WHERE active")}
         for eid in afectados:
             cov = {r[0] for r in conn.execute(
