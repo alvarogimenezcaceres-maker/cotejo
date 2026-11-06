@@ -47,13 +47,15 @@ def main(aplicar):
         vacios = conn.execute(
             "DELETE FROM events e WHERE NOT EXISTS (SELECT 1 FROM event_articles ea WHERE ea.event_id=e.id)").rowcount
         paso("notas y hechos vacíos borrados")
-        all_types = {r[0] for r in conn.execute("SELECT DISTINCT tipo FROM sources WHERE active")}
-        for eid in afectados:
-            cov = {r[0] for r in conn.execute(
-                """SELECT DISTINCT s.tipo FROM event_articles ea JOIN articles a ON a.id=ea.article_id
-                   JOIN sources s ON s.id=a.source_id WHERE ea.event_id=%s""", (eid,))}
-            conn.execute("UPDATE events SET covered_types=%s, missing_types=%s WHERE id=%s",
-                         (sorted(cov), sorted(all_types - cov), eid))
+        all_types = sorted(r[0] for r in conn.execute("SELECT DISTINCT tipo FROM sources WHERE active"))
+        conn.execute(
+            """UPDATE events e SET covered_types = c.cov,
+                      missing_types = ARRAY(SELECT t FROM unnest(%s::text[]) t WHERE t <> ALL(c.cov))
+               FROM (SELECT ea.event_id, array_agg(DISTINCT s.tipo ORDER BY s.tipo) AS cov
+                     FROM event_articles ea JOIN articles a ON a.id=ea.article_id JOIN sources s ON s.id=a.source_id
+                     GROUP BY ea.event_id) c
+               WHERE c.event_id = e.id AND e.id = ANY(%s)""", (all_types, afectados))
+        paso("tipos recalculados")
         print(f"borradas {len(fuera)} notas y {vacios} hechos vacíos; {len(afectados)} hechos recalculados")
 
 

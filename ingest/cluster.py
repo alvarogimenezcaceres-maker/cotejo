@@ -86,8 +86,6 @@ def main(threshold):
             conn.execute("INSERT INTO event_articles VALUES (%s,%s)", (best, aid))
             touched.add(best)
 
-        # sección: hechos nuevos y los que aún están sin clasificar ('otros')
-        touched |= {r[0] for r in conn.execute("SELECT id FROM events WHERE topic='otros'")}
         all_types = {r[0] for r in conn.execute("SELECT DISTINCT tipo FROM sources WHERE active")}
         for eid in touched:
             cov = {r[0] for r in conn.execute(
@@ -98,6 +96,17 @@ def main(threshold):
                 (eid,)).fetchall()
             conn.execute("UPDATE events SET covered_types=%s, missing_types=%s, topic=%s, updated_at=now() WHERE id=%s",
                          (sorted(cov), sorted(all_types - cov), temas.section(notes), eid))
+        # hechos viejos aún sin sección ('otros'): se clasifican en bloque, sin tocar updated_at
+        pend = [r[0] for r in conn.execute("SELECT id FROM events WHERE topic='otros'") if r[0] not in touched]
+        notas = {}
+        for eid, t, sn in conn.execute(
+                """SELECT ea.event_id, a.title, a.snippet FROM event_articles ea
+                   JOIN articles a ON a.id=ea.article_id WHERE ea.event_id = ANY(%s)""", (pend,)):
+            notas.setdefault(eid, []).append((t, sn))
+        with conn.cursor() as cur:
+            cur.executemany("UPDATE events SET topic=%s WHERE id=%s",
+                            [(temas.section(n), eid) for eid, n in notas.items()])
+        print(f"hechos viejos clasificados: {len(notas)}")
         print(f"notas agrupadas: {joined} a eventos existentes, {new_ev} eventos nuevos")
 
 
