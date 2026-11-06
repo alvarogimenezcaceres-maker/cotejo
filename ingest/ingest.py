@@ -10,7 +10,6 @@ import html
 import os
 import re
 import time
-import unicodedata
 from calendar import timegm
 from datetime import datetime, timezone
 from pathlib import Path
@@ -21,6 +20,8 @@ import feedparser
 import psycopg
 import requests
 import yaml
+
+from temas import Temas
 
 ROOT = Path(__file__).resolve().parent.parent
 USER_AGENT = "CotejoBot/0.1 (+https://github.com/TU-USUARIO/cotejo; agregador abierto sin fines de lucro)"
@@ -33,31 +34,6 @@ def snippet(entry):
     raw = entry.get("summary") or ""
     text = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", raw))).strip()
     return text[:300] or None
-
-
-def norm(text):
-    t = unicodedata.normalize("NFD", text.lower())
-    return "".join(c for c in t if unicodedata.category(c) != "Mn")
-
-
-def term_regex(terms):
-    return re.compile(r"\b(?:" + "|".join(re.escape(norm(t)) for t in terms) + r")\b")
-
-
-def topic_filter():
-    t = yaml.safe_load((ROOT / "sources/temas.yaml").read_text(encoding="utf-8"))
-    py, own = term_regex(t["paraguay"]), term_regex(t["propios"])
-    gen, foreign = term_regex(t["generales"]), term_regex(t["internacional"])
-
-    def relevant(title, snip):
-        text = norm(f"{title} {snip or ''}")
-        if own.search(text):
-            return True
-        if foreign.search(text):
-            return bool(py.search(text))
-        return bool(gen.search(text))
-
-    return relevant
 
 
 def published(entry):
@@ -81,7 +57,7 @@ def allowed(url, cache):
 def main():
     srcs = yaml.safe_load((ROOT / "sources/sources.yaml").read_text(encoding="utf-8"))["media"]
     cls = yaml.safe_load((ROOT / "sources/media.yaml").read_text(encoding="utf-8"))["media"]
-    relevant = topic_filter()
+    relevant = Temas().relevant
     robots = {}
     with psycopg.connect(DB) as conn:
         for m in srcs:

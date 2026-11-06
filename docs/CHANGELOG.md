@@ -11,3 +11,4 @@
 - 2026-10-19: .github/workflows/cycle.yml: ciclo horario en GitHub Actions (ingesta, agrupación, build) publicado en Pages; BD en Neon vía secreto COTEJO_DB. Quita la dependencia de la compu local.
 - 2026-10-19: Astro con base '/cotejo' y enlaces vía BASE_URL, para que el sitio funcione en usuario.github.io/cotejo/.
 - 2026-11-06: Filtro temático al ingerir (sources/temas.yaml + ingest.py): solo política y economía de Paraguay y nexos internacionales. Enfoca el producto; descarta deportes, policiales sin vínculo político y noticias extranjeras sin vínculo con Paraguay.
+- 2026-11-06: Portada por secciones (Política, Economía, Nexos internacionales) y solo hechos con 2+ medios distintos. cluster.py asigna la sección (migración idempotente del CHECK de events.topic). Nuevo ingest/purge_offtopic.py y entrada `purgar` del workflow para borrar una vez las notas viejas fuera de tema.

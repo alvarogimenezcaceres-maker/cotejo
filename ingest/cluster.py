@@ -2,7 +2,8 @@
 
 Hace: calcula embeddings (título + fragmento) de las notas nuevas y las asigna al evento
 más parecido (similitud coseno al centroide, ventana de 3 días) o crea un evento nuevo.
-Recalcula qué tipos de medios cubrieron cada evento y cuáles no (punto ciego).
+Recalcula qué tipos de medios cubrieron cada evento y cuáles no (punto ciego),
+y asigna la sección (politica, economia, internacional) según sources/temas.yaml.
 No hace: no genera resúmenes, no marca eventos sensibles, no descarga texto de las notas.
 
 Uso: py ingest/cluster.py [umbral]   (por defecto 0.75)
@@ -13,6 +14,8 @@ import sys
 import numpy as np
 import psycopg
 from fastembed import TextEmbedding
+
+from temas import Temas
 
 DB = os.environ.get("COTEJO_DB", "postgresql://cotejo:cotejo_dev@127.0.0.1:5433/cotejo")
 MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"  # 384 dim
@@ -31,8 +34,15 @@ def unit(a):
     return a / (np.linalg.norm(a) or 1.0)
 
 
+# Migración idempotente: el esquema original no tenía la sección 'internacional'.
+TOPICS = "('politica','salud','educacion','economia','seguridad','ambiente','otros','internacional')"
+
+
 def main(threshold):
+    temas = Temas()
     with psycopg.connect(DB) as conn:
+        conn.execute("ALTER TABLE events DROP CONSTRAINT IF EXISTS events_topic_check")
+        conn.execute(f"ALTER TABLE events ADD CONSTRAINT events_topic_check CHECK (topic IN {TOPICS})")
         rows = conn.execute("SELECT id, title, coalesce(snippet,'') FROM articles WHERE embedding IS NULL").fetchall()
         if rows:
             model = TextEmbedding(MODEL)
@@ -76,13 +86,18 @@ def main(threshold):
             conn.execute("INSERT INTO event_articles VALUES (%s,%s)", (best, aid))
             touched.add(best)
 
+        # sección: hechos nuevos y los que aún están sin clasificar ('otros')
+        touched |= {r[0] for r in conn.execute("SELECT id FROM events WHERE topic='otros'")}
         all_types = {r[0] for r in conn.execute("SELECT DISTINCT tipo FROM sources WHERE active")}
         for eid in touched:
             cov = {r[0] for r in conn.execute(
                 """SELECT DISTINCT s.tipo FROM event_articles ea JOIN articles a ON a.id=ea.article_id
                    JOIN sources s ON s.id=a.source_id WHERE ea.event_id=%s""", (eid,))}
-            conn.execute("UPDATE events SET covered_types=%s, missing_types=%s, updated_at=now() WHERE id=%s",
-                         (sorted(cov), sorted(all_types - cov), eid))
+            notes = conn.execute(
+                "SELECT a.title, a.snippet FROM event_articles ea JOIN articles a ON a.id=ea.article_id WHERE ea.event_id=%s",
+                (eid,)).fetchall()
+            conn.execute("UPDATE events SET covered_types=%s, missing_types=%s, topic=%s, updated_at=now() WHERE id=%s",
+                         (sorted(cov), sorted(all_types - cov), temas.section(notes), eid))
         print(f"notas agrupadas: {joined} a eventos existentes, {new_ev} eventos nuevos")
 
 

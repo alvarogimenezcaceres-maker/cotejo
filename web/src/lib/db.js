@@ -12,6 +12,13 @@ export const TIPOS = {
   fuente_primaria: 'Fuente primaria',
 };
 
+// Secciones de la portada, en orden. La asigna ingest/cluster.py según sources/temas.yaml.
+export const SECCIONES = {
+  politica: 'Política',
+  economia: 'Economía',
+  internacional: 'Nexos internacionales',
+};
+
 // Slugs cuya clasificación fue revisada (revisado: true en sources/media.yaml).
 function revisados() {
   const txt = readFileSync(resolve(process.cwd(), '../sources/media.yaml'), 'utf8');
@@ -23,7 +30,7 @@ export async function cargarEventos() {
   const client = new pg.Client({ connectionString: DB });
   await client.connect();
   const { rows } = await client.query(`
-    SELECT e.id, e.title, e.first_seen_at, e.updated_at,
+    SELECT e.id, e.title, e.topic, e.first_seen_at, e.updated_at,
            s.slug, s.name AS medio, s.tipo,
            a.title AS nota, a.url, a.snippet, a.published_at
     FROM events e
@@ -37,7 +44,7 @@ export async function cargarEventos() {
 
   const por = new Map();
   for (const r of rows) {
-    if (!por.has(r.id)) por.set(r.id, { id: r.id, title: r.title, updated: r.updated_at, notas: [] });
+    if (!por.has(r.id)) por.set(r.id, { id: r.id, title: r.title, seccion: r.topic, updated: r.updated_at, notas: [] });
     por.get(r.id).notas.push(r);
   }
   const eventos = [...por.values()]
@@ -49,7 +56,7 @@ export async function cargarEventos() {
       e.fecha = e.notas.map((n) => n.published_at).filter(Boolean).sort().at(-1) ?? e.updated;
       return e;
     })
-    .filter((e) => e.notas.length >= 2)
+    .filter((e) => e.medios >= 2 && e.seccion in SECCIONES)
     .sort((a, b) => b.medios - a.medios || b.fecha - a.fecha);
   return { eventos, tiposActivos };
 }

@@ -6,6 +6,11 @@ on:
   schedule:
     - cron: "0 * * * *"
   workflow_dispatch:
+    inputs:
+      purgar:
+        description: "Borrar notas guardadas que no pasan el filtro temático (una vez)"
+        type: boolean
+        default: false
 
 concurrency:
   group: ciclo
@@ -45,6 +50,8 @@ jobs:
           key: fastembed-minilm-l12-v2
       - run: pip install -r ingest/requirements.txt
       - run: python ingest/ingest.py
+      - if: ${{ inputs.purgar }}
+        run: python ingest/purge_offtopic.py --aplicar
       - run: python ingest/cluster.py
       - run: npm ci && npm run build
         working-directory: web

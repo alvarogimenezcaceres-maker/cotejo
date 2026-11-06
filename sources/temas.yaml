@@ -1,10 +1,12 @@
-# Filtro temático de Cotejo: política y economía de Paraguay y sus nexos internacionales.
+# Criterio temático de Cotejo: política y economía de Paraguay y sus nexos internacionales.
 # Se aplica a título + fragmento al ingerir (sin tildes ni mayúsculas, palabra completa).
 # Una nota se guarda si:
 #   1. contiene un término de `propios` (instituciones y actores políticos de Paraguay); o
 #   2. contiene un actor extranjero de `internacional` Y un marcador de `paraguay` (nexo); o
-#   3. no menciona actores extranjeros y contiene un término de `generales` (política/economía).
+#   3. no menciona actores extranjeros y contiene un término de `politica` o `economia`.
 # Una nota con actores extranjeros y sin vínculo con Paraguay se descarta.
+# Las secciones del sitio salen de estas mismas listas: un hecho con actor extranjero y
+# marcador de Paraguay va en "Nexos internacionales"; si no, gana la lista con más coincidencias.
 # Los términos son públicos a propósito: quien quiera ver qué se incluye y qué no, lo ve aquí.
 
 paraguay: [paraguay, paraguayo, paraguaya, paraguayos, paraguayas, asuncion]
@@ -35,7 +37,7 @@ propios:
   - mburuvicha rora
   - palacio de lopez
 
-generales:
+politica:
   - gobierno
   - presidente
   - ministro
@@ -54,10 +56,17 @@ generales:
   - gobernador
   - oposicion
   - oficialismo
-  - presupuesto
-  - impuestos
   - reforma
   - ley
+  - fiscal
+  - fiscalia
+  - corrupcion
+  - juicio politico
+  - lavado
+
+economia:
+  - presupuesto
+  - impuestos
   - economia
   - inflacion
   - dolar
@@ -78,11 +87,6 @@ generales:
   - precios
   - salario
   - empleo
-  - fiscal
-  - fiscalia
-  - corrupcion
-  - juicio politico
-  - lavado
 
 internacional:
   - mercosur
