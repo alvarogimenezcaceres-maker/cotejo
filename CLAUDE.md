@@ -1,6 +1,6 @@
 # Cotejo
 
-Agregador open source (AGPL-3.0) de noticias de Paraguay. Agrupa las notas por hecho, muestra cómo lo cubrió cada medio y qué tipo de medios no lo cubrió (punto ciego). Stack: Python 3.11+ (usar `py`), PostgreSQL + pgvector, sitio estático Astro, cron. Entorno: Windows. Despliegue: VPS con Docker Compose.
+Agregador open source (AGPL-3.0) de noticias de economía de Paraguay, con prioridad al mercado de valores (bolsa, casas de bolsa, bonos, SIV, BCP). Agrupa las notas por hecho, muestra cómo lo cubrió cada medio y qué tipo de medios no lo cubrió (punto ciego). Stack: Python 3.11+ (usar `py`), PostgreSQL + pgvector, sitio estático Astro, cron. Entorno: Windows. Despliegue: VPS con Docker Compose.
 
 ## REGLAS DE AHORRO
 - Responde en español, corto. Sin preámbulos. Al final de cada paso, máximo 3 líneas.
