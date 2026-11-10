@@ -2,7 +2,7 @@
 
 Hace: calcula embeddings (título + fragmento) de las notas nuevas y las asigna al evento
 más parecido (similitud coseno al centroide, ventana de 3 días) o crea un evento nuevo.
-Los comunicados de la BVA son hechos propios (no se agrupan entre sí). El título de un hecho es el de su nota más reciente.
+Los comunicados de la BVA son hechos propios (no se agrupan entre sí). El título de un hecho es el de su nota más representativa de las últimas 48 h.
 Recalcula qué tipos de medios cubrieron cada evento y cuáles no (punto ciego),
 y asigna la sección (bolsa, economia) según sources/temas.yaml.
 No hace: no genera resúmenes, no marca eventos sensibles, no descarga texto de las notas.
@@ -108,12 +108,20 @@ def main(threshold):
                 (eid,)).fetchall()
             conn.execute("UPDATE events SET covered_types=%s, missing_types=%s, topic=%s, updated_at=now() WHERE id=%s",
                          (sorted(cov), sorted(all_types - cov), temas.section(notes), eid))
-        # título del hecho = el de su nota más reciente (evita títulos de cuando empezó la historia)
+        # título del hecho = el de la nota más representativa de sus últimas 48 h (la más cercana al centro
+        # de esas notas): sigue el estado actual de la historia sin elegir resúmenes que mezclan temas
         conn.execute(
-            """UPDATE events e SET title = x.title
-               FROM (SELECT DISTINCT ON (ea.event_id) ea.event_id, a.title
-                     FROM event_articles ea JOIN articles a ON a.id = ea.article_id
-                     ORDER BY ea.event_id, a.published_at DESC NULLS LAST, a.id DESC) x
+            """WITH n AS (
+                   SELECT ea.event_id, a.id, a.title, a.embedding, a.published_at,
+                          max(a.published_at) OVER (PARTITION BY ea.event_id) AS ultimo
+                   FROM event_articles ea JOIN articles a ON a.id = ea.article_id
+                   WHERE a.embedding IS NOT NULL),
+               rec AS (SELECT * FROM n WHERE ultimo IS NULL OR published_at >= ultimo - interval '48 hours'),
+               k AS (SELECT event_id, avg(embedding) AS c FROM rec GROUP BY event_id)
+               UPDATE events e SET title = x.title
+               FROM (SELECT DISTINCT ON (rec.event_id) rec.event_id, rec.title
+                     FROM rec JOIN k ON k.event_id = rec.event_id
+                     ORDER BY rec.event_id, rec.embedding <=> k.c, rec.published_at DESC NULLS LAST, rec.id) x
                WHERE x.event_id = e.id AND e.title <> x.title""")
 
         # hechos no tocados hoy: se reclasifican en bloque (así un cambio en temas.yaml se propaga), sin tocar updated_at

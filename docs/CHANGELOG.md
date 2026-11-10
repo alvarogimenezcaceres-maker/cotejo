@@ -23,3 +23,4 @@
 - 2026-11-10: media.yaml: propiedad y fuentes documentadas para ABC Color, Última Hora, Hoy, Diario Popular, ADN y BVA; 'sin dato' en Paraguay.com, El Nacional y La Clave. Todos siguen revisado: false hasta validar línea editorial y rectificaciones.
 - 2026-11-10: docs/rediseno.md: diagnóstico medido del sitio, Radar de Cobertura (6 propuestas), nueva home, Índice de Relevancia, sistema de diseño, roadmap y 10 decisiones pendientes. Solo propuesta; no se implementó nada.
 - 2026-11-10: cluster.py: los comunicados de la BVA ya no se agrupan entre sí (cada uno es su hecho; se repara el evento de 105 notas) y el título de cada hecho pasa a ser el de su nota más reciente. Corrige P0-1 y P0-2 de docs/rediseno.md.
+- 2026-11-10: cluster.py: el título de un hecho pasa a ser el de la nota más cercana al centro de sus últimas 48 h (antes: la más reciente, que elegía resúmenes tipo 'Lo que tenés que saber').
