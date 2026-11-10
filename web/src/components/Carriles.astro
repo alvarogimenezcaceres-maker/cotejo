@@ -1,0 +1,48 @@
+---
+// Línea de tiempo de un hecho: un punto por nota, un carril por medio. El primero en publicar va resaltado.
+// Muestra el orden entre las fuentes que Cotejo lee, no el orden real de todo el ecosistema.
+import { fmt } from '../lib/db.js';
+const { medios, t0, t1, compacto = false } = Astro.props;
+const conTiempo = medios.filter((m) => m.ts.length > 0);
+const pos = (t) => (t1 === t0 ? 50 : 3 + ((t - t0) / (t1 - t0)) * 94);
+const resumen = conTiempo
+  .map((m, i) => `${m.nombre}${i === 0 ? ' primero' : ` ${m.lag}`}`)
+  .join(', ');
+---
+{compacto ? (
+  <span class="pista mini" role="img" aria-label={`Orden de publicación: ${resumen}`}>
+    {conTiempo.map((m, i) => <i class:list={['pt', { ini: i === 0 }]} style={`left:${pos(m.ts[0])}%`}></i>)}
+  </span>
+) : (
+  <div class="carriles" role="group" aria-label="Línea de tiempo de la cobertura, un carril por medio">
+    {conTiempo.map((m, i) => (
+      <div class:list={['carril', { primero: i === 0 }]}>
+        <span class="med">{m.nombre} <em>{i === 0 ? 'primero' : m.lag}</em></span>
+        <span class="pista">
+          {m.ts.map((t) => (
+            <i class:list={['pt', { ini: i === 0 && t === m.ts[0] }]} style={`left:${pos(t)}%`} title={fmt(t)}></i>
+          ))}
+        </span>
+      </div>
+    ))}
+    <div class="eje" aria-hidden="true"><span>{fmt(t0)}</span><span>{fmt(t1)}</span></div>
+  </div>
+)}
+<style>
+  .pista { position: relative; display: block; height: 14px; }
+  .pista::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--line); }
+  .pt { position: absolute; top: 50%; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%;
+        background: var(--surface); border: 2px solid var(--muted); }
+  .pt.ini { background: var(--accent); border-color: var(--accent); width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; }
+  .mini { width: 9rem; max-width: 100%; margin-top: .55rem; }
+  .carriles { margin: 1.1rem 0 .4rem; }
+  .carril { display: grid; grid-template-columns: 1fr; gap: .1rem; padding: .35rem 0; }
+  .med { font: 600 .82rem/1.2 var(--sans); }
+  .med em { font: 500 .72rem var(--mono); font-style: normal; color: var(--muted); margin-left: .35rem; }
+  .carril.primero .med em { color: var(--accent); font-weight: 700; }
+  .eje { display: flex; justify-content: space-between; gap: 1rem; margin-top: .3rem; font: .7rem var(--mono); color: var(--muted); }
+  @media (min-width: 40rem) {
+    .carril { grid-template-columns: 11.5rem 1fr; align-items: center; gap: 1rem; }
+    .eje { margin-left: 12.5rem; }
+  }
+</style>

@@ -41,16 +41,19 @@ function lag(ms) {
 // Quién publicó primero entre las fuentes que Cotejo lee y cuánto después se sumó cada una.
 // La BVA publica solo la fecha (sin hora): aparece sin desfase.
 function cobertura(notas) {
-  const primera = new Map();
+  const por = new Map();
   for (const n of notas) {
     if (!n.published_at || n.slug === 'bva') continue;
-    const t = new Date(n.published_at).getTime();
-    if (!primera.has(n.slug) || t < primera.get(n.slug).t) primera.set(n.slug, { nombre: n.medio, t });
+    if (!por.has(n.slug)) por.set(n.slug, { nombre: n.medio, ts: [] });
+    por.get(n.slug).ts.push(new Date(n.published_at).getTime());
   }
-  const orden = [...primera.values()].sort((a, b) => a.t - b.t);
-  const medios = orden.map((m, i) => ({ nombre: m.nombre, lag: i === 0 ? null : lag(m.t - orden[0].t) }));
-  for (const n of notas) if (n.slug === 'bva' && !medios.some((m) => m.nombre === n.medio)) medios.push({ nombre: n.medio, lag: null });
-  return { medios, conOrden: orden.length > 1 };
+  const orden = [...por.values()]
+    .map((m) => ({ ...m, ts: m.ts.sort((x, y) => x - y) }))
+    .sort((x, y) => x.ts[0] - y.ts[0]);
+  const medios = orden.map((m, i) => ({ nombre: m.nombre, ts: m.ts, lag: i === 0 ? null : lag(m.ts[0] - orden[0].ts[0]) }));
+  for (const n of notas) if (n.slug === 'bva' && !medios.some((m) => m.nombre === n.medio)) medios.push({ nombre: n.medio, ts: [], lag: null });
+  const todos = orden.flatMap((m) => m.ts);
+  return { medios, conOrden: orden.length > 1, t0: todos.length ? Math.min(...todos) : 0, t1: todos.length ? Math.max(...todos) : 0 };
 }
 
 // Orden provisional de la portada: 40 % medios distintos, 25 % volumen de notas, 35 % frescura. No mide impacto de mercado.
