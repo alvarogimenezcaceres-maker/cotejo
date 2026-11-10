@@ -1,4 +1,5 @@
 ---
+import MercadoBarra from '../components/MercadoBarra.astro';
 const {
   title = 'Cotejo',
   description = 'Cómo cubrió cada medio de Paraguay un mismo hecho de economía y mercado de valores, y quién no lo cubrió.',
@@ -42,6 +43,7 @@ const repo = 'https://github.com/alvarogimenezcaceres-maker/cotejo';
         </nav>
       </div>
     </header>
+    <MercadoBarra />
     <main id="contenido"><slot /></main>
     <footer class="pie">
       <div class="pie-in">

@@ -51,6 +51,7 @@ jobs:
       - run: pip install -r ingest/requirements.txt
       - run: python ingest/ingest.py
       - run: python ingest/bva.py
+      - run: python ingest/mercado.py
       - if: ${{ inputs.purgar }}
         run: python ingest/purge_offtopic.py --aplicar
       - run: python ingest/cluster.py

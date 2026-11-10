@@ -114,3 +114,43 @@ export const fmt = (d) =>
   new Intl.DateTimeFormat('es-PY', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Asuncion' }).format(new Date(d));
 export const fmtCorto = (d) =>
   new Intl.DateTimeFormat('es-PY', { day: 'numeric', month: 'short', timeZone: 'America/Asuncion' }).format(new Date(d));
+
+// Pulso de mercado: último valor de cada cotización de referencia y una serie corta (ver ingest/mercado.py).
+const SIMBOLOS = [
+  { sym: 'USDPYG', nombre: 'USD/PYG', unidad: 'Gs.', dec: 0, fx: true, nota: 'Referencia internacional; no es la cotización oficial del BCP.' },
+  { sym: 'BTC', nombre: 'Bitcoin', unidad: 'US$', dec: 0, nota: '' },
+  { sym: 'ETH', nombre: 'Ethereum', unidad: 'US$', dec: 0, nota: '' },
+  { sym: 'XAU', nombre: 'Oro (PAXG)', unidad: 'US$', dec: 0, nota: 'PAXG es un token respaldado en oro: sustituto de la onza.' },
+];
+let mercado;
+export function cargarMercado() {
+  return (mercado ??= consultarMercado());
+}
+async function consultarMercado() {
+  const client = new pg.Client({ connectionString: DB });
+  await client.connect();
+  let rows = [];
+  try {
+    rows = (
+      await client.query(
+        "SELECT symbol, value, change_pct, as_of, source FROM market_quotes WHERE as_of > now() - interval '8 days' ORDER BY symbol, as_of"
+      )
+    ).rows;
+  } catch {
+    rows = []; // la tabla aún no existe: no hay pulso
+  }
+  await client.end();
+  const por = new Map();
+  for (const r of rows) (por.get(r.symbol) ?? por.set(r.symbol, []).get(r.symbol)).push(r);
+  return SIMBOLOS.map((s) => {
+    const serie = por.get(s.sym) ?? [];
+    if (serie.length === 0) return null;
+    const ult = serie.at(-1);
+    let cambio = ult.change_pct;
+    if (cambio == null) {
+      const ref = [...serie].reverse().find((p) => new Date(ult.as_of) - new Date(p.as_of) >= 20 * H);
+      cambio = ref ? (ult.value / ref.value - 1) * 100 : null;
+    }
+    return { ...s, valor: ult.value, cambio, asOf: ult.as_of, fuente: ult.source, serie: serie.map((p) => p.value) };
+  }).filter(Boolean);
+}

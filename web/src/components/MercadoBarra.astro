@@ -1,0 +1,67 @@
+---
+// Pulso de mercado: cotizaciones de referencia con retraso. No son oficiales ni una recomendación.
+import { cargarMercado } from '../lib/db.js';
+const items = await cargarMercado();
+const num = (v, d) => new Intl.NumberFormat('es-PY', { minimumFractionDigits: d, maximumFractionDigits: d }).format(v);
+const pct = (v) => `${v > 0 ? '+' : ''}${num(v, 2)} %`;
+const cuando = (d) =>
+  new Intl.DateTimeFormat('es-PY', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'America/Asuncion' }).format(new Date(d));
+const puntos = (serie) => {
+  if (serie.length < 2) return null;
+  const min = Math.min(...serie);
+  const max = Math.max(...serie);
+  const w = 56;
+  const h = 18;
+  return serie
+    .map((v, i) => `${((i / (serie.length - 1)) * w).toFixed(1)},${(max === min ? h / 2 : h - 2 - ((v - min) / (max - min)) * (h - 4)).toFixed(1)}`)
+    .join(' ');
+};
+---
+{items.length > 0 && (
+  <section class="pulso" aria-label="Pulso de mercado: cotizaciones de referencia con retraso">
+    <div class="pulso-in">
+      <ul>
+        {items.map((i) => {
+          const linea = puntos(i.serie);
+          return (
+            <li title={`${i.nota ? i.nota + ' ' : ''}Dato de ${cuando(i.asOf)} · ${i.fuente}`}>
+              <span class="n">{i.nombre}</span>
+              <b>{i.unidad} {num(i.valor, i.dec)}</b>
+              {i.cambio != null && (
+                <span class:list={['c', i.fx ? 'neutro' : i.cambio >= 0 ? 'sube' : 'baja']}>
+                  <span aria-hidden="true">{i.cambio >= 0 ? '▲' : '▼'}</span> {pct(i.cambio)}<span class="sr"> de variación</span>
+                </span>
+              )}
+              {linea && (
+                <svg class="spark" viewBox="0 0 56 18" width="56" height="18" aria-hidden="true" focusable="false">
+                  <polyline points={linea} fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" />
+                </svg>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+      <p class="fuentes">
+        Referencias con retraso, no oficiales ni asesoramiento financiero. Pasa el mouse sobre cada valor para ver su hora y fuente.
+        <a href="https://www.exchangerate-api.com" rel="noopener noreferrer">Rates By Exchange Rate API</a> ·
+        <a href="https://www.coingecko.com" rel="noopener noreferrer">Datos de CoinGecko</a>
+      </p>
+    </div>
+  </section>
+)}
+<style>
+  .pulso { background: var(--surface); border-bottom: 1px solid var(--line); }
+  .pulso-in { max-width: 72rem; margin: 0 auto; padding: .15rem 1rem .45rem; }
+  ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 0 1.6rem; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; }
+  ul::-webkit-scrollbar { display: none; }
+  li { display: flex; align-items: baseline; gap: .5rem; flex: none; padding: .45rem 0; font: .8rem/1.2 var(--mono); scroll-snap-align: start; cursor: help; }
+  .n { color: var(--muted); }
+  b { font-weight: 700; }
+  .c { font-size: .74rem; }
+  .sube { color: var(--pos); }
+  .baja { color: var(--neg); }
+  .neutro { color: var(--muted); }
+  .spark { align-self: center; color: var(--muted); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .fuentes { margin: 0; font-size: .7rem; line-height: 1.4; color: var(--muted); }
+</style>

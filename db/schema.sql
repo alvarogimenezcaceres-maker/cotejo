@@ -59,3 +59,15 @@ CREATE TABLE IF NOT EXISTS unpublished (
     reason         TEXT NOT NULL,
     unpublished_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Pulso de mercado: cotizaciones de referencia (las crea y llena ingest/mercado.py).
+CREATE TABLE IF NOT EXISTS market_quotes (
+    id         BIGSERIAL PRIMARY KEY,
+    symbol     TEXT NOT NULL,
+    value      DOUBLE PRECISION NOT NULL,
+    change_pct DOUBLE PRECISION,
+    as_of      TIMESTAMPTZ NOT NULL,
+    fetched_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    source     TEXT NOT NULL,
+    UNIQUE (symbol, as_of)
+);
