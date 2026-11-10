@@ -35,12 +35,12 @@ const descripcion = hero
       {hero && (
         <section class="hero" aria-labelledby="hero-t">
           <p class="etq">
-            Hecho destacado ·
+            Hecho destacado ·{' '}
             <span title="Se ordena por cobertura (medios distintos) y frescura. Es un orden provisional, no mide impacto de mercado.">cómo se ordena ⓘ</span>
           </p>
           <h2 id="hero-t"><a href={`${base}/evento/${hero.id}/`}>{hero.title}</a></h2>
           <p class="meta">
-            {hero.medios} {hero.medios === 1 ? 'medio' : 'medios'} · {hero.notas.length} notas · última nota
+            {hero.medios} {hero.medios === 1 ? 'medio' : 'medios'} · {hero.notas.length} notas · última nota{' '}
             <time datetime={iso(hero.fecha)} data-rel>{fmt(hero.fecha)}</time>
           </p>
           {hero.cobertura.conOrden ? (
@@ -66,7 +66,7 @@ const descripcion = hero
               <li>
                 <h3><a href={`${base}/evento/${e.id}/`}>{e.title}</a></h3>
                 <p class="meta">
-                  <time datetime={iso(e.fecha)} data-rel>{fmt(e.fecha)}</time>
+                  <time datetime={iso(e.fecha)} data-rel>{fmt(e.fecha)}</time>{' '}
                   · {quienes(e)} · {e.notas.length} {e.notas.length === 1 ? 'nota' : 'notas'}
                 </p>
                 {e.clasificado && (

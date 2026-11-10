@@ -25,3 +25,4 @@
 - 2026-11-10: cluster.py: los comunicados de la BVA ya no se agrupan entre sí (cada uno es su hecho; se repara el evento de 105 notas) y el título de cada hecho pasa a ser el de su nota más reciente. Corrige P0-1 y P0-2 de docs/rediseno.md.
 - 2026-11-10: cluster.py: el título de un hecho pasa a ser el de la nota más cercana al centro de sus últimas 48 h (antes: la más reciente, que elegía resúmenes tipo 'Lo que tenés que saber').
 - 2026-11-10: Fase 7 (UX base): portada con hecho destacado y orden por cobertura + frescura (solo hechos de los últimos 14 días), comunicados de la BVA en bloque aparte, orden de publicación por medio ("primero", +desfase) en portada y eventos, fechas relativas con JavaScript opcional, metadatos og/canonical/favicon.
+- 2026-11-10: Fase 7: espacios en fechas relativas y orden de portada con peso de volumen de notas (ver decisiones).

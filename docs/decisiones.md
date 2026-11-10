@@ -23,3 +23,4 @@
 - 2026-11-10: Orden provisional de la portada = 0,5·cobertura (ln(1+medios)/ln(9)) + 0,5·frescura (exp(−horas/24)). No se muestra el puntaje (aún no es el Índice de Relevancia de docs/rediseno.md). Solo se listan hechos con notas de los últimos 14 días; los anteriores siguen en su URL.
 - 2026-11-10: Los comunicados de la BVA salen del listado de hechos y van a un bloque propio que enlaza directo a la BVA: son fuente primaria, no cobertura de prensa.
 - 2026-11-10: Los desfases entre medios son "entre las fuentes que Cotejo lee"; no se muestran desfases menores a 10 minutos ("a la par") y la BVA se excluye porque solo publica la fecha.
+- 2026-11-10: Ajuste del orden de la portada tras verla publicada: 0,4·medios + 0,25·volumen de notas (ln(1+notas)/ln(21)) + 0,35·frescura. Con solo medios y frescura, un hecho de 3 notas y 19 minutos superaba al de 20 notas y 4 medios.

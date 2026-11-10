@@ -53,11 +53,12 @@ function cobertura(notas) {
   return { medios, conOrden: orden.length > 1 };
 }
 
-// Orden provisional de la portada: mitad cobertura (medios distintos), mitad frescura. No mide impacto de mercado.
+// Orden provisional de la portada: 40 % medios distintos, 25 % volumen de notas, 35 % frescura. No mide impacto de mercado.
 function relevancia(e, ahora) {
   const c = Math.min(1, Math.log(1 + e.medios) / Math.log(1 + 8));
+  const n = Math.min(1, Math.log(1 + e.notas.length) / Math.log(1 + 20));
   const f = Math.exp(-Math.max(0, (ahora - new Date(e.fecha).getTime()) / H) / 24);
-  return 0.5 * c + 0.5 * f;
+  return 0.4 * c + 0.25 * n + 0.35 * f;
 }
 
 export async function cargarEventos() {
