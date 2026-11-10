@@ -1,14 +1,53 @@
 # Clasificación de medios de Cotejo (eje editorial, no izquierda-derecha).
 # Criterios (ver docs/metodologia.md): propiedad, vínculos, línea editorial, rectificaciones.
 # Valores de tipo: oficialismo | independiente | critico | publico | fuente_primaria
-# revisado: false = clasificación PROVISIONAL, sin documentar con evidencia. No se publica hasta revisarla.
+# revisado: false = clasificación PROVISIONAL. Mientras sea false, el campo `tipo` es un valor
+# de relleno (no una conclusión) y el sitio no muestra el punto ciego. Pasa a true solo cuando
+# propiedad, vínculos, línea editorial y rectificaciones tienen evidencia y alguien la revisó.
+# `propiedad` y `fuentes` recogen datos con respaldo público (2026-11-10); "sin dato" = no verificado.
 media:
-  abc-color:     {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y línea editorial."}
-  hoy:           {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
-  diario-popular: {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
-  paraguay-com:  {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
-  el-nacional:   {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
-  adn-digital:   {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
-  la-clave:      {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
-  ultima-hora:   {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
-  bva:           {tipo: fuente_primaria, revisado: false, nota: "Bolsa de Valores de Asunción: fuente primaria del mercado. Pendiente: documentar criterios."}
+  abc-color:
+    {tipo: independiente, revisado: false,
+     propiedad: "Editorial Azeta S.A. (Grupo ABC Comunicaciones), fundado en 1967 por Aldo Zuccolillo; dirige Natalia Zuccolillo. El grupo Zuccolillo figura como inversionista en otros negocios (p. ej. Biggie, según el propio diario).",
+     fuentes: ["https://en.wikipedia.org/wiki/ABC_Color", "https://www.abc.com.py/edicion-impresa/editorial/2025/08/13/por-orden-del-presidente-de-la-republica-en-abc-color-no-nos-vamos-a-callar/"],
+     pendiente: "Línea editorial actual frente al gobierno y rectificaciones: sin evidencia sistemática."}
+  ultima-hora:
+    {tipo: independiente, revisado: false,
+     propiedad: "Editorial El País S.A., del Grupo A. J. Vierci (también Telefuturo y Radio Monumental).",
+     fuentes: ["https://en.wikipedia.org/wiki/%C3%9Altima_Hora_(Paraguay)", "https://en.wikipedia.org/wiki/Antonio_J._Vierci"],
+     pendiente: "Línea editorial y rectificaciones: sin evidencia sistemática."}
+  hoy:
+    {tipo: independiente, revisado: false,
+     propiedad: "Nación Media (fusión en 2022 de Grupo Nación y Multimedia S.A.). Según La Nación, el Grupo Nación fue adquirido en 2015 por el Grupo Cartes, del expresidente Horacio Cartes.",
+     fuentes: ["https://www.lanacion.com.py/negocios/2022/03/08/nacion-media-una-nacion-al-servicio-de-paraguay/", "https://www.hoy.com.py/negocios/nacion-media-una-nacion-al-servicio-de-paraguay"],
+     pendiente: "Confirmar titularidad actual en registros societarios; línea editorial y rectificaciones."}
+  diario-popular:
+    {tipo: independiente, revisado: false,
+     propiedad: "Nación Media (mismo grupo que La Nación, Hoy, Crónica y ADN), según La Nación (2022). Fuentes antiguas lo ubican en Multimedia S.A.",
+     fuentes: ["https://www.lanacion.com.py/negocios/2022/03/08/nacion-media-una-nacion-al-servicio-de-paraguay/", "https://en.wikipedia.org/wiki/Diario_Popular_(Paraguay)"],
+     pendiente: "Confirmar titularidad actual; línea editorial y rectificaciones."}
+  adn-digital:
+    {tipo: independiente, revisado: false,
+     propiedad: "Figura entre los medios de Nación Media, según La Nación (2022).",
+     fuentes: ["https://www.lanacion.com.py/negocios/2022/03/08/nacion-media-una-nacion-al-servicio-de-paraguay/"],
+     pendiente: "Confirmar titularidad actual; línea editorial y rectificaciones."}
+  paraguay-com:
+    {tipo: independiente, revisado: false,
+     propiedad: "sin dato",
+     fuentes: [],
+     pendiente: "Propiedad, vínculos, línea editorial y rectificaciones: sin evidencia."}
+  el-nacional:
+    {tipo: independiente, revisado: false,
+     propiedad: "sin dato",
+     fuentes: [],
+     pendiente: "Propiedad, vínculos, línea editorial y rectificaciones: sin evidencia."}
+  la-clave:
+    {tipo: independiente, revisado: false,
+     propiedad: "sin dato",
+     fuentes: [],
+     pendiente: "Propiedad, vínculos, línea editorial y rectificaciones: sin evidencia."}
+  bva:
+    {tipo: fuente_primaria, revisado: false,
+     propiedad: "Bolsa de Valores de Asunción: institución del mercado; publica sus propios comunicados.",
+     fuentes: ["https://www.bolsadevalores.com.py/"],
+     pendiente: "Documentar criterios de fuente primaria."}

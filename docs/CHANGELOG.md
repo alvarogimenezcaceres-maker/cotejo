@@ -20,3 +20,4 @@
 - 2026-11-10: CLAUDE.md: descripción del proyecto actualizada al enfoque en economía y mercado de valores.
 - 2026-11-10: ingest/bva.py: lee 3 listados públicos de la BVA (hechos de relevancia, nuevas emisiones, avisos de interés), sin RSS. Solo título, enlace y fecha; excepción documentada a 'RSS antes que scraping'. Fuente primaria; se ejecuta en cada ciclo.
 - 2026-11-10: temas.yaml: gentilicios y actores extranjeros (brasileño, Reserva Federal...) y nueva guarda: si la nota menciona actores políticos solo entra con término de bolsa/economía; los términos institucionales (MEF, Itaipú, empresas...) valen sin política. Corrige falsos positivos de la portada.
+- 2026-11-10: media.yaml: propiedad y fuentes documentadas para ABC Color, Última Hora, Hoy, Diario Popular, ADN y BVA; 'sin dato' en Paraguay.com, El Nacional y La Clave. Todos siguen revisado: false hasta validar línea editorial y rectificaciones.
