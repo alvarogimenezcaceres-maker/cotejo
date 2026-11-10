@@ -2,6 +2,7 @@
 
 Hace: calcula embeddings (título + fragmento) de las notas nuevas y las asigna al evento
 más parecido (similitud coseno al centroide, ventana de 3 días) o crea un evento nuevo.
+Los comunicados de la BVA son hechos propios (no se agrupan entre sí). El título de un hecho es el de su nota más reciente.
 Recalcula qué tipos de medios cubrieron cada evento y cuáles no (punto ciego),
 y asigna la sección (bolsa, economia) según sources/temas.yaml.
 No hace: no genera resúmenes, no marca eventos sensibles, no descarga texto de las notas.
@@ -51,6 +52,17 @@ def main(threshold):
                 conn.execute("UPDATE articles SET embedding=%s::vector WHERE id=%s", (vec(unit(e)), aid))
         print(f"embeddings: {len(rows)}")
 
+        # Reparación: cada comunicado de la BVA es un hecho propio (sus títulos son plantilla y se
+        # parecen entre sí). Se desvinculan de los eventos que reunían varios y se vuelven a asignar abajo.
+        rep = conn.execute(
+            """DELETE FROM event_articles ea USING articles a, sources s
+               WHERE ea.article_id = a.id AND s.id = a.source_id AND s.slug = 'bva'
+                 AND (SELECT count(*) FROM event_articles ea2 JOIN articles a2 ON a2.id = ea2.article_id
+                      WHERE ea2.event_id = ea.event_id AND a2.source_id = a.source_id) > 1""").rowcount
+        vacios = conn.execute(
+            "DELETE FROM events e WHERE NOT EXISTS (SELECT 1 FROM event_articles ea WHERE ea.event_id = e.id)").rowcount
+        print(f"BVA: {rep} notas desvinculadas, {vacios} eventos vacíos borrados")
+
         # centroides de eventos recientes
         cents = {}
         for eid, emb in conn.execute(
@@ -62,15 +74,15 @@ def main(threshold):
         counts = {k: len(v) for k, v in cents.items()}
 
         pending = conn.execute(
-            """SELECT a.id, a.title, a.embedding::text FROM articles a
+            """SELECT a.id, a.title, a.embedding::text, s.slug FROM articles a JOIN sources s ON s.id = a.source_id
                WHERE a.embedding IS NOT NULL AND NOT EXISTS (SELECT 1 FROM event_articles WHERE article_id=a.id)
                ORDER BY a.published_at NULLS LAST""").fetchall()
         new_ev = joined = 0
         touched = set()
-        for aid, title, emb in pending:
+        for aid, title, emb, slug in pending:
             v = parse(emb)
             best, sim = None, 0.0
-            for eid, c in cents.items():
+            for eid, c in ([] if slug == "bva" else cents.items()):  # los comunicados de la BVA no se agrupan
                 s = float(v @ c)
                 if s > sim:
                     best, sim = eid, s
@@ -96,6 +108,14 @@ def main(threshold):
                 (eid,)).fetchall()
             conn.execute("UPDATE events SET covered_types=%s, missing_types=%s, topic=%s, updated_at=now() WHERE id=%s",
                          (sorted(cov), sorted(all_types - cov), temas.section(notes), eid))
+        # título del hecho = el de su nota más reciente (evita títulos de cuando empezó la historia)
+        conn.execute(
+            """UPDATE events e SET title = x.title
+               FROM (SELECT DISTINCT ON (ea.event_id) ea.event_id, a.title
+                     FROM event_articles ea JOIN articles a ON a.id = ea.article_id
+                     ORDER BY ea.event_id, a.published_at DESC NULLS LAST, a.id DESC) x
+               WHERE x.event_id = e.id AND e.title <> x.title""")
+
         # hechos no tocados hoy: se reclasifican en bloque (así un cambio en temas.yaml se propaga), sin tocar updated_at
         pend = [r[0] for r in conn.execute("SELECT id FROM events") if r[0] not in touched]
         notas = {}

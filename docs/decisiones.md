@@ -18,3 +18,4 @@
 - 2026-11-10: Reddit y X descartados: robots.txt de Reddit es `Disallow: /`, X no respondió y exige API de pago; sus publicaciones no se pueden respaldar con 2 fuentes independientes.
 - 2026-11-10: Scraping de BVA autorizado como excepción a 'RSS antes que scraping': no hay RSS ni API, robots.txt no lo restringe, solo 3 listados, pausa de 2 s y sin abrir las fichas. Los títulos son el nombre de la entidad más el tipo de comunicado.
 - 2026-11-10: Lista 'politica' en temas.yaml usada solo como guarda (no como tema): 'pena' (por Peña, sin tilde) puede coincidir con 'vale la pena'; el efecto es solo excluir notas con término institucional débil, aceptable.
+- 2026-11-10: Título de hecho = nota más reciente: refleja el estado actual de una historia que evoluciona; puede cambiar entre ciclos y a veces priorizar un medio menor. Alternativa descartada: nota más cercana al centroide (estable, pero obsoleta si la historia cambia).
