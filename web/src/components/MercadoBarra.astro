@@ -6,6 +6,7 @@ const num = (v, d) => new Intl.NumberFormat('es-PY', { minimumFractionDigits: d,
 const pct = (v) => `${v > 0 ? '+' : ''}${num(v, 2)} %`;
 const cuando = (d) =>
   new Intl.DateTimeFormat('es-PY', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'America/Asuncion' }).format(new Date(d));
+const dia = (d) => new Intl.DateTimeFormat('es-PY', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(d));
 const puntos = (serie) => {
   if (serie.length < 2) return null;
   const min = Math.min(...serie);
@@ -24,7 +25,7 @@ const puntos = (serie) => {
         {items.map((i) => {
           const linea = puntos(i.serie);
           return (
-            <li title={`${i.nota ? i.nota + ' ' : ''}Dato de ${cuando(i.asOf)} · ${i.fuente}`}>
+            <li title={`${i.nota ? i.nota + ' ' : ''}${i.soloFecha ? 'Día hábil ' + dia(i.asOf) : 'Dato de ' + cuando(i.asOf)} · ${i.fuente}`}>
               <span class="n">{i.nombre}</span>
               <b>{i.unidad} {num(i.valor, i.dec)}</b>
               {i.cambio != null && (
@@ -42,7 +43,10 @@ const puntos = (serie) => {
         })}
       </ul>
       <p class="fuentes">
-        Referencias con retraso, no oficiales ni asesoramiento financiero. Pasa el mouse sobre cada valor para ver su hora y fuente.
+        El dólar del BCP es su cotización referencial interbancaria (no el precio de compra o venta de las casas de cambio);
+        el resto son referencias con retraso, no oficiales ni asesoramiento financiero. Pasa el mouse sobre cada valor para ver su fecha y fuente.
+        <a href="https://www.bcp.gov.py/webapps/web/cotizacion/monedas" rel="noopener noreferrer">Fuente del BCP</a> vía
+        <a href="https://frankfurter.dev" rel="noopener noreferrer">Frankfurter</a> ·
         <a href="https://www.exchangerate-api.com" rel="noopener noreferrer">Rates By Exchange Rate API</a> ·
         <a href="https://www.coingecko.com" rel="noopener noreferrer">Datos de CoinGecko</a>
       </p>

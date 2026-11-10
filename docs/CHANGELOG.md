@@ -30,3 +30,4 @@
 - 2026-11-10: Rediseño: en móvil la cabecera deja de ser fija y el menú pasa a una sola línea desplazable; las horas no se parten en dos líneas.
 - 2026-11-10: Rediseño: las fechas del eje de la línea de tiempo no se parten en dos líneas.
 - 2026-11-10: Pulso de mercado: ingest/mercado.py guarda USD/PYG (ExchangeRate-API), Bitcoin, Ethereum y oro vía PAXG (CoinGecko) en market_quotes; barra bajo la cabecera con valor, variación, mini serie y hora/fuente al pasar el mouse, con atribución. S&P 500, Nasdaq y petróleo pendientes: Stooq no responde y FRED exige una clave.
+- 2026-11-10: Cotización referencial del BCP (USD/PYG, interbancaria, un valor por día hábil) en el pulso, vía Frankfurter, con 21 días de historia. La de mercado (ExchangeRate-API) sigue al lado como "USD/PYG · mercado".

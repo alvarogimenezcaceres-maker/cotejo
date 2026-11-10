@@ -117,7 +117,8 @@ export const fmtCorto = (d) =>
 
 // Pulso de mercado: último valor de cada cotización de referencia y una serie corta (ver ingest/mercado.py).
 const SIMBOLOS = [
-  { sym: 'USDPYG', nombre: 'USD/PYG', unidad: 'Gs.', dec: 0, fx: true, nota: 'Referencia internacional; no es la cotización oficial del BCP.' },
+  { sym: 'USDPYG_BCP', nombre: 'USD/PYG · BCP', unidad: 'Gs.', dec: 2, fx: true, soloFecha: true, nota: 'Cotización referencial interbancaria del Banco Central del Paraguay, un valor por día hábil.' },
+  { sym: 'USDPYG', nombre: 'USD/PYG · mercado', unidad: 'Gs.', dec: 0, fx: true, nota: 'Referencia de mercado internacional; no es la cotización oficial del BCP.' },
   { sym: 'BTC', nombre: 'Bitcoin', unidad: 'US$', dec: 0, nota: '' },
   { sym: 'ETH', nombre: 'Ethereum', unidad: 'US$', dec: 0, nota: '' },
   { sym: 'XAU', nombre: 'Oro (PAXG)', unidad: 'US$', dec: 0, nota: 'PAXG es un token respaldado en oro: sustituto de la onza.' },
@@ -133,7 +134,7 @@ async function consultarMercado() {
   try {
     rows = (
       await client.query(
-        "SELECT symbol, value, change_pct, as_of, source FROM market_quotes WHERE as_of > now() - interval '8 days' ORDER BY symbol, as_of"
+        "SELECT symbol, value, change_pct, as_of, source FROM market_quotes WHERE as_of > now() - interval '15 days' ORDER BY symbol, as_of"
       )
     ).rows;
   } catch {

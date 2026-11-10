@@ -1,15 +1,17 @@
-"""Pulso de mercado de Cotejo: guarda cotizaciones de referencia (USD/PYG, Bitcoin, Ethereum, oro).
+"""Pulso de mercado de Cotejo: guarda cotizaciones de referencia (USD/PYG del BCP y de mercado, Bitcoin, Ethereum, oro).
 
-Hace: consulta dos APIs públicas gratuitas (ExchangeRate-API y CoinGecko), con user-agent propio, y guarda
+Hace: consulta tres APIs públicas gratuitas (Frankfurter, ExchangeRate-API y CoinGecko), con user-agent propio, y guarda
 el valor y la hora de cada dato para que el sitio muestre el último valor y una serie corta. USD/PYG se pide
 como máximo cada 6 h (la fuente actualiza una vez al día). El oro es PAXG, un token respaldado en oro: es un
 sustituto, no la cotización de la onza en el mercado de metales.
-No hace: no da cotizaciones oficiales (el BCP no se lee), no predice ni recomienda, no usa claves ni cuentas.
+La cotización referencial del BCP se toma de Frankfurter (proyecto abierto que republica el dato del BCP, un valor por día hábil);
+el sitio del BCP no se lee porque bloquea el acceso automatizado.
+No hace: no evade bloqueos, no predice ni recomienda, no usa claves ni cuentas.
 
 Uso: py ingest/mercado.py   (BD: variable COTEJO_DB, por defecto localhost:5433)
 """
 import os
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
 import psycopg
 import requests
@@ -18,6 +20,8 @@ USER_AGENT = "CotejoBot/0.1 (+https://github.com/alvarogimenezcaceres-maker/cote
 DB = os.environ.get("COTEJO_DB", "postgresql://cotejo:cotejo_dev@127.0.0.1:5433/cotejo")
 TIMEOUT = 20
 FX_CADA_HORAS = 6
+BCP_CADA_HORAS = 3
+BCP_DIAS = 21
 CRIPTO = {"bitcoin": "BTC", "ethereum": "ETH", "pax-gold": "XAU"}
 
 SCHEMA = """
@@ -47,6 +51,13 @@ def fetch_fx():
     return float(d["rates"]["PYG"]), datetime.fromtimestamp(d["time_last_update_unix"], timezone.utc)
 
 
+def fetch_bcp():
+    """[(día hábil, guaraníes por dólar)] de los últimos días: cotización referencial interbancaria del BCP."""
+    desde = (date.today() - timedelta(days=BCP_DIAS)).isoformat()
+    d = get_json(f"https://api.frankfurter.dev/v2/rates?providers=BCP&base=USD&quotes=PYG&from={desde}")
+    return [(date.fromisoformat(x["date"]), float(x["rate"])) for x in d if x.get("quote") == "PYG"]
+
+
 def fetch_cripto():
     """[(símbolo, valor en dólares, variación 24 h en %, hora del dato)]."""
     ids = ",".join(CRIPTO)
@@ -74,6 +85,21 @@ def main():
     with psycopg.connect(DB, connect_timeout=30) as conn:
         conn.execute(SCHEMA)
         nuevas = 0
+        bcp_reciente = conn.execute(
+            "SELECT count(*) FROM market_quotes WHERE symbol='USDPYG_BCP' AND fetched_at > now() - make_interval(hours => %s)",
+            (BCP_CADA_HORAS,)).fetchone()[0]
+        if bcp_reciente:
+            print("USDPYG_BCP: dato nuevo hace menos de 3 h, se omite")
+        else:
+            try:
+                serie = fetch_bcp()
+                for dia, valor in serie:
+                    nuevas += guardar(conn, "USDPYG_BCP", valor, None,
+                                      datetime(dia.year, dia.month, dia.day, tzinfo=timezone.utc), "BCP (vía Frankfurter)")
+                if serie:
+                    print(f"USDPYG_BCP: {serie[-1][1]:.2f} ({serie[-1][0]}), {len(serie)} días")
+            except Exception as e:
+                print(f"USDPYG_BCP: error {e}")
         reciente = conn.execute(
             "SELECT count(*) FROM market_quotes WHERE symbol='USDPYG' AND fetched_at > now() - make_interval(hours => %s)",
             (FX_CADA_HORAS,)).fetchone()[0]
