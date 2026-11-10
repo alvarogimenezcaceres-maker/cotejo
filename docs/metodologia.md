@@ -6,9 +6,27 @@
 - Se usa RSS; hay una pausa de 2 segundos entre pedidos al mismo sitio.
 
 ## Clasificación de medios
-- Eje: oficialismo, independiente, crítico del gobierno, público, fuente primaria. No hay eje izquierda-derecha.
-- Criterios: propiedad, vínculos, línea editorial y rectificaciones.
-- Mientras una clasificación figure como "revisado: false" es provisional y no se muestra al público.
+Cotejo clasifica a cada medio con un eje editorial (no hay eje izquierda-derecha) para poder mostrar qué tipo de medio contó un hecho y cuál no. La clasificación vive en un archivo público (`sources/media.yaml`) con la evidencia de cada medio.
+
+**Los cinco tipos**
+- **Oficialismo:** la propiedad o la dirección del medio tiene un vínculo documentado con el partido o el gobierno de turno.
+- **Crítico del gobierno:** el medio mantiene una confrontación sostenida con el gobierno de turno, documentada en sus editoriales o en conflictos públicos con el gobierno.
+- **Independiente:** no hay vínculo documentado con el partido o el gobierno ni una confrontación sostenida. Ojo: esto describe la ausencia de evidencia, no garantiza que el medio no tenga intereses propios.
+- **Público:** pertenece al Estado.
+- **Fuente primaria:** es la institución que publica sus propios comunicados (por ejemplo, la Bolsa de Valores de Asunción). No es un medio de prensa.
+
+**Los cuatro criterios que se revisan en cada medio**
+1. **Propiedad:** quién es dueño y qué otros negocios o medios tiene el grupo.
+2. **Vínculos:** relaciones documentadas con partidos, gobierno o actores económicos de los que informa.
+3. **Línea editorial:** cómo trata al gobierno, con ejemplos citados (editoriales, conflictos públicos). Una nota aislada no alcanza.
+4. **Rectificaciones:** si publica correcciones y derecho a réplica.
+
+**Cómo se decide**
+- Todo dato lleva su fuente. Si no hay fuente, el dato figura como «sin dato».
+- Cada propuesta lleva un nivel de confianza (alta, media o baja). «Sin evidencia» significa que hoy no se puede proponer una clasificación.
+- La clasificación que depende del gobierno (oficialismo, crítico) se refiere al gobierno vigente en la fecha indicada y debe reevaluarse cuando este cambie.
+- Una propuesta no es una decisión: pasa a ser pública solo cuando una persona revisa la evidencia y la marca como revisada. Mientras figure como «revisado: false» es provisional y no se muestra al público.
+- Los propios medios pueden pedir una revisión o aportar evidencia (por ejemplo, su política de rectificaciones) por el formulario de reportes o en el repositorio.
 
 ## Qué muestra el sitio
 - Solo hechos con al menos dos notas. Sin resumen: titulares, fragmentos y enlaces a cada medio.

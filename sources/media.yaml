@@ -1,53 +1,93 @@
 # Clasificación de medios de Cotejo (eje editorial, no izquierda-derecha).
-# Criterios (ver docs/metodologia.md): propiedad, vínculos, línea editorial, rectificaciones.
+# Criterios públicos: ver docs/metodologia.md (propiedad, vínculos, línea editorial, rectificaciones).
 # Valores de tipo: oficialismo | independiente | critico | publico | fuente_primaria
-# revisado: false = clasificación PROVISIONAL. Mientras sea false, el campo `tipo` es un valor
-# de relleno (no una conclusión) y el sitio no muestra el punto ciego. Pasa a true solo cuando
-# propiedad, vínculos, línea editorial y rectificaciones tienen evidencia y alguien la revisó.
-# `propiedad` y `fuentes` recogen datos con respaldo público (2026-11-10); "sin dato" = no verificado.
+#
+# revisado: false = clasificación PROVISIONAL. Mientras sea false, `tipo` es un valor de relleno (no una
+# conclusión) y el sitio no muestra el punto ciego. Pasa a true solo cuando una persona revisa la evidencia.
+# propuesta_*  = lo que sugiere la evidencia reunida (2026-11-10), con su nivel de confianza (alta/media/baja).
+#                Es una propuesta para revisar, no una decisión. `sin-evidencia` = no se puede proponer nada.
+# propiedad / vinculos / linea_editorial / rectificaciones = datos con respaldo público; «sin dato» = no verificado.
+# vigencia: «gobierno» se refiere al de Santiago Peña (agosto de 2023 a noviembre de 2026). Si cambia el gobierno,
+#           las clasificaciones que dependen de él (oficialismo, crítico) deben reevaluarse.
 media:
   abc-color:
     {tipo: independiente, revisado: false,
-     propiedad: "Editorial Azeta S.A. (Grupo ABC Comunicaciones), fundado en 1967 por Aldo Zuccolillo; dirige Natalia Zuccolillo. El grupo Zuccolillo figura como inversionista en otros negocios (p. ej. Biggie, según el propio diario).",
-     fuentes: ["https://en.wikipedia.org/wiki/ABC_Color", "https://www.abc.com.py/edicion-impresa/editorial/2025/08/13/por-orden-del-presidente-de-la-republica-en-abc-color-no-nos-vamos-a-callar/"],
-     pendiente: "Línea editorial actual frente al gobierno y rectificaciones: sin evidencia sistemática."}
+     propiedad: "Editorial Azeta S.A. (Grupo ABC Comunicaciones), fundado en 1967 por Aldo Zuccolillo; dirige Natalia Zuccolillo.",
+     vinculos: "Sin vínculo de propiedad con un partido o gobierno en las fuentes consultadas. El grupo Zuccolillo figura entre los cuatro grupos que RSF señala como dominantes de la prensa tradicional.",
+     linea_editorial: "Confrontación con el gobierno de Peña documentada por ambas partes en 2025: editorial del propio diario («en ABC Color no nos vamos a callar») y declaraciones del entonces presidente contra el Grupo Zuccolillo. Historial: apoyó a Stroessner en sus inicios y luego fue crítico.",
+     rectificaciones: "sin dato",
+     fuentes: ["https://en.wikipedia.org/wiki/ABC_Color", "https://www.abc.com.py/edicion-impresa/editorial/2025/08/13/por-orden-del-presidente-de-la-republica-en-abc-color-no-nos-vamos-a-callar/", "https://www.lapoliticaonline.com/paraguay/politica-py/santi-cruzo-al-grupo-zuccolillo-por-los-bonos-del-ips-es-una-campana-mediatica-mezquina-y-mentirosa/", "https://rsf.org/es/pais/paraguay"],
+     propuesta_tipo: critico, propuesta_confianza: media,
+     propuesta_motivo: "Línea editorial de confrontación sostenida con el gobierno de Peña, documentada por el medio y por el propio gobierno. Evaluado frente a ese gobierno; reevaluar con el actual."}
   ultima-hora:
     {tipo: independiente, revisado: false,
      propiedad: "Editorial El País S.A., del Grupo A. J. Vierci (también Telefuturo y Radio Monumental).",
-     fuentes: ["https://en.wikipedia.org/wiki/%C3%9Altima_Hora_(Paraguay)", "https://en.wikipedia.org/wiki/Antonio_J._Vierci"],
-     pendiente: "Línea editorial y rectificaciones: sin evidencia sistemática."}
+     vinculos: "Sin vínculo de propiedad con un partido o gobierno en las fuentes consultadas. El Grupo Vierci figura entre los cuatro grupos que RSF señala como dominantes.",
+     linea_editorial: "sin dato",
+     rectificaciones: "sin dato",
+     fuentes: ["https://en.wikipedia.org/wiki/%C3%9Altima_Hora_(Paraguay)", "https://en.wikipedia.org/wiki/Antonio_J._Vierci", "https://rsf.org/es/pais/paraguay"],
+     propuesta_tipo: independiente, propuesta_confianza: baja,
+     propuesta_motivo: "No se encontró vínculo de propiedad con el gobierno ni confrontación sostenida documentada. Es ausencia de evidencia, no evidencia de independencia."}
+  paraguay-com:
+    {tipo: independiente, revisado: false,
+     propiedad: "Grupo A. J. Vierci. Pie de página del sitio: «Copyright 2026 Paraguay.com, perteneciente al Grupo AJ Vierci».",
+     vinculos: "Mismo grupo que Última Hora. Sin vínculo de propiedad con un partido o gobierno en las fuentes consultadas.",
+     linea_editorial: "sin dato",
+     rectificaciones: "sin dato",
+     fuentes: ["https://www.paraguay.com/"],
+     propuesta_tipo: independiente, propuesta_confianza: baja,
+     propuesta_motivo: "Igual que Última Hora: ausencia de vínculo documentado, sin evidencia de línea editorial."}
   hoy:
     {tipo: independiente, revisado: false,
      propiedad: "Nación Media (fusión en 2022 de Grupo Nación y Multimedia S.A.). Según La Nación, el Grupo Nación fue adquirido en 2015 por el Grupo Cartes, del expresidente Horacio Cartes.",
-     fuentes: ["https://www.lanacion.com.py/negocios/2022/03/08/nacion-media-una-nacion-al-servicio-de-paraguay/", "https://www.hoy.com.py/negocios/nacion-media-una-nacion-al-servicio-de-paraguay"],
-     pendiente: "Confirmar titularidad actual en registros societarios; línea editorial y rectificaciones."}
+     vinculos: "RSF señala que Santiago Peña, del Partido Colorado, llegó a la presidencia en agosto de 2023 con el apoyo político de Horacio Cartes, cuya familia es propietaria de numerosos medios.",
+     linea_editorial: "sin dato",
+     rectificaciones: "sin dato",
+     fuentes: ["https://www.lanacion.com.py/negocios/2022/03/08/nacion-media-una-nacion-al-servicio-de-paraguay/", "https://www.hoy.com.py/negocios/nacion-media-una-nacion-al-servicio-de-paraguay", "https://rsf.org/es/pais/paraguay"],
+     propuesta_tipo: oficialismo, propuesta_confianza: media,
+     propuesta_motivo: "Vínculo de propiedad con el líder del partido que sostuvo al gobierno. Se basa en la propiedad; falta evidencia de línea editorial. Confirmar la titularidad actual de Hoy dentro de Nación Media."}
   diario-popular:
     {tipo: independiente, revisado: false,
      propiedad: "Nación Media (mismo grupo que La Nación, Hoy, Crónica y ADN), según La Nación (2022). Fuentes antiguas lo ubican en Multimedia S.A.",
-     fuentes: ["https://www.lanacion.com.py/negocios/2022/03/08/nacion-media-una-nacion-al-servicio-de-paraguay/", "https://en.wikipedia.org/wiki/Diario_Popular_(Paraguay)"],
-     pendiente: "Confirmar titularidad actual; línea editorial y rectificaciones."}
+     vinculos: "Igual que Hoy: grupo de propiedad vinculado al Grupo Cartes.",
+     linea_editorial: "sin dato",
+     rectificaciones: "sin dato",
+     fuentes: ["https://www.lanacion.com.py/negocios/2022/03/08/nacion-media-una-nacion-al-servicio-de-paraguay/", "https://en.wikipedia.org/wiki/Diario_Popular_(Paraguay)", "https://rsf.org/es/pais/paraguay"],
+     propuesta_tipo: oficialismo, propuesta_confianza: media,
+     propuesta_motivo: "Igual que Hoy: se basa en la propiedad; falta línea editorial y confirmar titularidad actual."}
   adn-digital:
     {tipo: independiente, revisado: false,
      propiedad: "Figura entre los medios de Nación Media, según La Nación (2022).",
+     vinculos: "Igual que Hoy: grupo de propiedad vinculado al Grupo Cartes.",
+     linea_editorial: "sin dato",
+     rectificaciones: "sin dato",
      fuentes: ["https://www.lanacion.com.py/negocios/2022/03/08/nacion-media-una-nacion-al-servicio-de-paraguay/"],
-     pendiente: "Confirmar titularidad actual; línea editorial y rectificaciones."}
-  paraguay-com:
-    {tipo: independiente, revisado: false,
-     propiedad: "sin dato",
-     fuentes: [],
-     pendiente: "Propiedad, vínculos, línea editorial y rectificaciones: sin evidencia."}
+     propuesta_tipo: oficialismo, propuesta_confianza: baja,
+     propuesta_motivo: "Solo una mención de pertenencia a Nación Media (2022); confirmar la titularidad actual antes de clasificar."}
   el-nacional:
     {tipo: independiente, revisado: false,
-     propiedad: "sin dato",
-     fuentes: [],
-     pendiente: "Propiedad, vínculos, línea editorial y rectificaciones: sin evidencia."}
+     propiedad: "Según SIPIAPA, Diana Domínguez Wilson-Smith es fundadora, directora y propietaria del diario digital El Nacional. Por confirmar: el sitio no la nombra en su pie de página.",
+     vinculos: "sin dato",
+     linea_editorial: "sin dato",
+     rectificaciones: "sin dato",
+     fuentes: ["https://www.sipiapa.org/notas/1210882-dominguez-wilson-smith-diana"],
+     propuesta_tipo: sin-evidencia, propuesta_confianza: baja,
+     propuesta_motivo: "Propiedad por confirmar y sin datos de vínculos ni línea editorial."}
   la-clave:
     {tipo: independiente, revisado: false,
-     propiedad: "sin dato",
-     fuentes: [],
-     pendiente: "Propiedad, vínculos, línea editorial y rectificaciones: sin evidencia."}
+     propiedad: "sin dato. El pie de página dice solo «Diario La Clave. Todos los derechos reservados»; no hay página de equipo ni aviso legal.",
+     vinculos: "sin dato",
+     linea_editorial: "sin dato",
+     rectificaciones: "sin dato",
+     fuentes: ["https://www.laclave.com.py/"],
+     propuesta_tipo: sin-evidencia, propuesta_confianza: baja,
+     propuesta_motivo: "No hay datos públicos de propiedad. Hace falta preguntarle al medio."}
   bva:
     {tipo: fuente_primaria, revisado: false,
      propiedad: "Bolsa de Valores de Asunción: institución del mercado; publica sus propios comunicados.",
+     vinculos: "No es un medio: es la entidad que emite los comunicados que Cotejo muestra.",
+     linea_editorial: "No aplica: comunicados oficiales de la propia institución.",
+     rectificaciones: "No aplica.",
      fuentes: ["https://www.bolsadevalores.com.py/"],
-     pendiente: "Documentar criterios de fuente primaria."}
+     propuesta_tipo: fuente_primaria, propuesta_confianza: alta,
+     propuesta_motivo: "Es la institución que publica sus propios avisos."}
