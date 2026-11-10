@@ -5,7 +5,9 @@
 #   2. menciona un actor extranjero de `internacional`, un marcador de `paraguay` Y un término
 #      de `bolsa` o `economia` (nexo económico de Paraguay con el exterior).
 # Una nota con actores extranjeros y sin vínculo con Paraguay se descarta. La política sin
-# componente económico queda fuera.
+# componente económico queda fuera: si la nota menciona actores políticos (`politica`), solo se
+# guarda con un término de `bolsa` o `economia`; los de `institucional` (MEF, Hacienda, Itaipú,
+# empresas, mercado...) valen únicamente cuando no hay actores políticos.
 # Secciones del sitio: un hecho con algún término de `bolsa` va en "Mercado de valores";
 # el resto en "Economía".
 # Los términos son públicos a propósito: quien quiera ver qué se incluye y qué no, lo ve aquí.
@@ -110,12 +112,9 @@ economia:
   - aseguradora
   - cooperativa
   - cooperativas
-  - empresa
-  - empresas
   - empresarial
   - industria
   - industrial
-  - mercado
   - precios
   - salario
   - salarios
@@ -123,14 +122,43 @@ economia:
   - desempleo
   - combustible
   - combustibles
-  - petropar
-  - itaipu
-  - yacyreta
   - bcp
   - banco central
+
+politica:
+  - santiago pena
+  - santi pena
+  - pena
+  - cartes
+  - congreso
+  - senado
+  - senador
+  - senadora
+  - diputado
+  - diputada
+  - diputados
+  - juicio politico
+  - oposicion
+  - oficialismo
+  - partido colorado
+  - anr
+  - plra
+  - intendente
+  - gobernador
+  - candidato
+  - candidata
+  - elecciones
+
+institucional:
+  - empresa
+  - empresas
+  - mercado
   - mef
   - ministerio de economia
   - hacienda
+  - petropar
+  - itaipu
+  - yacyreta
 
 internacional:
   - mercosur
@@ -161,3 +189,37 @@ internacional:
   - tratado
   - acuerdo comercial
   - hidrovia
+  - brasileno
+  - brasilena
+  - brasilenos
+  - argentino
+  - argentina
+  - argentinos
+  - chileno
+  - chilena
+  - uruguayo
+  - uruguaya
+  - boliviano
+  - boliviana
+  - estadounidense
+  - estadounidenses
+  - chino
+  - china
+  - chinos
+  - taiwanes
+  - europeo
+  - europea
+  - europeos
+  - mexico
+  - mexicano
+  - peru
+  - peruano
+  - colombia
+  - venezuela
+  - espana
+  - alemania
+  - japon
+  - banco central europeo
+  - reserva federal
+  - wall street
+  - nueva york

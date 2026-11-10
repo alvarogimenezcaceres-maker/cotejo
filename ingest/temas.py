@@ -28,11 +28,15 @@ class Temas:
         self.py = term_regex(t["paraguay"])
         self.bolsa = term_regex(t["bolsa"])
         self.eco = term_regex(t["economia"])
+        self.inst = term_regex(t["institucional"])
+        self.pol = term_regex(t["politica"])
         self.foreign = term_regex(t["internacional"])
 
     def relevant(self, title, snippet):
         text = norm(f"{title} {snippet or ''}")
-        if not (self.bolsa.search(text) or self.eco.search(text)):
+        fuerte = self.bolsa.search(text) or self.eco.search(text)
+        debil = self.inst.search(text) and not self.pol.search(text)
+        if not (fuerte or debil):
             return False
         return bool(self.py.search(text)) if self.foreign.search(text) else True
 
