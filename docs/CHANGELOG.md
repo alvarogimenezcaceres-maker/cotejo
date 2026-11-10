@@ -18,3 +18,4 @@
 - 2026-11-10: Giro editorial: solo economía de Paraguay con prioridad al mercado de valores (bolsa, casas de bolsa, bonos, SIV, BCP). Nuevo sources/temas.yaml (bolsa/economia), secciones Mercado de valores y Economía, 1 medio basta en bolsa. Se quita la política.
 - 2026-11-10: Última Hora (economia.atom) agregada como fuente en sources.yaml y media.yaml (clasificación provisional, revisado: false).
 - 2026-11-10: CLAUDE.md: descripción del proyecto actualizada al enfoque en economía y mercado de valores.
+- 2026-11-10: ingest/bva.py: lee 3 listados públicos de la BVA (hechos de relevancia, nuevas emisiones, avisos de interés), sin RSS. Solo título, enlace y fecha; excepción documentada a 'RSS antes que scraping'. Fuente primaria; se ejecuta en cada ciclo.

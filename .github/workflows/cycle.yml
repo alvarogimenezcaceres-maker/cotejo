@@ -50,6 +50,7 @@ jobs:
           key: fastembed-minilm-l12-v2
       - run: pip install -r ingest/requirements.txt
       - run: python ingest/ingest.py
+      - run: python ingest/bva.py
       - if: ${{ inputs.purgar }}
         run: python ingest/purge_offtopic.py --aplicar
       - run: python ingest/cluster.py

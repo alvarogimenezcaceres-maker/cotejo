@@ -24,3 +24,4 @@ La portada agrupa los hechos en dos secciones: Mercado de valores y Economía. U
 
 ## Qué fuentes no se usan
 Cotejo respeta el `robots.txt` de cada sitio. No se leen Reddit ni X (Twitter): sus reglas prohíben el acceso automatizado, y además sus publicaciones no son verificables con la regla de dos fuentes independientes.
+La Bolsa de Valores de Asunción (BVA) se incluye como fuente primaria: se leen solo sus tres listados públicos de comunicados (hechos de relevancia, nuevas emisiones y avisos de interés), con título, enlace y fecha. Cotejo no copia el contenido de los comunicados.

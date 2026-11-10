@@ -11,3 +11,4 @@ media:
   adn-digital:   {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
   la-clave:      {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
   ultima-hora:   {tipo: independiente, revisado: false, nota: "Pendiente: documentar propiedad y vínculos."}
+  bva:           {tipo: fuente_primaria, revisado: false, nota: "Bolsa de Valores de Asunción: fuente primaria del mercado. Pendiente: documentar criterios."}
