@@ -14,9 +14,8 @@ export const TIPOS = {
 
 // Secciones de la portada, en orden. La asigna ingest/cluster.py según sources/temas.yaml.
 export const SECCIONES = {
-  politica: 'Política',
+  bolsa: 'Mercado de valores',
   economia: 'Economía',
-  internacional: 'Nexos internacionales',
 };
 
 // Slugs cuya clasificación fue revisada (revisado: true en sources/media.yaml).
@@ -56,7 +55,7 @@ export async function cargarEventos() {
       e.fecha = e.notas.map((n) => n.published_at).filter(Boolean).sort().at(-1) ?? e.updated;
       return e;
     })
-    .filter((e) => e.medios >= 2 && e.seccion in SECCIONES)
+    .filter((e) => e.seccion in SECCIONES && e.medios >= (e.seccion === 'bolsa' ? 1 : 2))
     .sort((a, b) => b.medios - a.medios || b.fecha - a.fecha);
   return { eventos, tiposActivos };
 }

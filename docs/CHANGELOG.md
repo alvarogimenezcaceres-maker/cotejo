@@ -15,3 +15,5 @@
 - 2026-11-06: purge_offtopic.py: índice en event_articles(article_id), borrado explícito y statement_timeout de 120 s. La primera depuración se colgó más de 10 min sin ese índice; ahora falla rápido si algo se atasca.
 - 2026-11-06: purge_offtopic.py imprime cada paso con hora (flush) y revisa sesiones 'idle in transaction' ajenas, para diagnosticar el atasco de la depuración.
 - 2026-11-06: purge_offtopic.py recalcula tipos con un solo UPDATE y cluster.py clasifica en bloque los hechos viejos: antes eran ~2 consultas por hecho (miles) y el ciclo se atascaba. Datos reales: 9.887 notas, 8.072 fuera de tema.
+- 2026-11-10: Giro editorial: solo economía de Paraguay con prioridad al mercado de valores (bolsa, casas de bolsa, bonos, SIV, BCP). Nuevo sources/temas.yaml (bolsa/economia), secciones Mercado de valores y Economía, 1 medio basta en bolsa. Se quita la política.
+- 2026-11-10: Última Hora (economia.atom) agregada como fuente en sources.yaml y media.yaml (clasificación provisional, revisado: false).

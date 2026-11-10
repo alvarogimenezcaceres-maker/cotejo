@@ -1,92 +1,136 @@
-# Criterio temático de Cotejo: política y economía de Paraguay y sus nexos internacionales.
+# Criterio temático de Cotejo: economía de Paraguay, con prioridad al mercado de valores.
 # Se aplica a título + fragmento al ingerir (sin tildes ni mayúsculas, palabra completa).
 # Una nota se guarda si:
-#   1. contiene un término de `propios` (instituciones y actores políticos de Paraguay); o
-#   2. contiene un actor extranjero de `internacional` Y un marcador de `paraguay` (nexo); o
-#   3. no menciona actores extranjeros y contiene un término de `politica` o `economia`.
-# Una nota con actores extranjeros y sin vínculo con Paraguay se descarta.
-# Las secciones del sitio salen de estas mismas listas: un hecho con actor extranjero y
-# marcador de Paraguay va en "Nexos internacionales"; si no, gana la lista con más coincidencias.
+#   1. no menciona actores extranjeros y contiene un término de `bolsa` o `economia`; o
+#   2. menciona un actor extranjero de `internacional`, un marcador de `paraguay` Y un término
+#      de `bolsa` o `economia` (nexo económico de Paraguay con el exterior).
+# Una nota con actores extranjeros y sin vínculo con Paraguay se descarta. La política sin
+# componente económico queda fuera.
+# Secciones del sitio: un hecho con algún término de `bolsa` va en "Mercado de valores";
+# el resto en "Economía".
 # Los términos son públicos a propósito: quien quiera ver qué se incluye y qué no, lo ve aquí.
 
 paraguay: [paraguay, paraguayo, paraguaya, paraguayos, paraguayas, asuncion]
 
-propios:
-  - santiago pena
-  - cartes
-  - partido colorado
-  - anr
-  - plra
-  - liberal radical
-  - tsje
-  - tribunal superior de justicia electoral
-  - ministerio publico
-  - fiscalia general
-  - contraloria general
-  - ministerio de economia
-  - ministerio de relaciones exteriores
-  - cancilleria
-  - banco central del paraguay
-  - petropar
-  - itaipu
-  - yacyreta
-  - camara de diputados
-  - camara de senadores
-  - congreso nacional
-  - poder ejecutivo
-  - mburuvicha rora
-  - palacio de lopez
-
-politica:
-  - gobierno
-  - presidente
-  - ministro
-  - ministra
-  - senado
-  - senador
-  - senadora
-  - diputado
-  - diputada
-  - congreso
-  - parlamento
-  - elecciones
-  - candidato
-  - candidata
-  - intendente
-  - gobernador
-  - oposicion
-  - oficialismo
-  - reforma
-  - ley
-  - fiscal
-  - fiscalia
-  - corrupcion
-  - juicio politico
-  - lavado
+bolsa:
+  - bolsa de valores
+  - bolsa de comercio
+  - bva
+  - bvpasa
+  - casa de bolsa
+  - casas de bolsa
+  - bursatil
+  - bursatiles
+  - mercado de valores
+  - mercado de capitales
+  - superintendencia de valores
+  - siv
+  - caja de valores
+  - calificadora de riesgo
+  - calificadoras de riesgo
+  - hecho de relevancia
+  - hechos de relevancia
+  - emision de bonos
+  - emisiones de bonos
+  - bono
+  - bonos
+  - obligaciones
+  - titulos de deuda
+  - titulos valores
+  - fondo de inversion
+  - fondos de inversion
+  - fondos mutuos
+  - accionista
+  - accionistas
+  - emisor
+  - emisores
+  - cotizacion
+  - inversionista
+  - inversionistas
+  - cadiem
+  - basa capital
+  - puente casa de bolsa
+  - valores casa de bolsa
 
 economia:
-  - presupuesto
-  - impuestos
   - economia
+  - economico
+  - economica
+  - economicos
+  - economicas
   - inflacion
   - dolar
+  - guarani
+  - tipo de cambio
+  - cambio de divisas
   - deuda
+  - presupuesto
+  - impuestos
+  - tributaria
+  - tributario
+  - dnit
   - exportaciones
+  - exportacion
   - importaciones
+  - importacion
+  - comercio
+  - comerciantes
   - soja
   - carne
+  - trigo
+  - maiz
+  - cosecha
+  - productores
+  - ganaderos
+  - frigorifico
+  - frigorificos
   - inversion
+  - inversiones
   - pib
   - tarifa
   - arancel
-  - dnit
-  - productores
-  - ganaderos
-  - comerciantes
   - banco
+  - bancos
+  - bank
+  - bancario
+  - bancaria
+  - bancop
+  - financiero
+  - financiera
+  - financieros
+  - credito
+  - creditos
+  - prestamo
+  - prestamos
+  - tasa de interes
+  - tasas de interes
+  - ahorristas
+  - ahorro
+  - seguros
+  - aseguradora
+  - cooperativa
+  - cooperativas
+  - empresa
+  - empresas
+  - empresarial
+  - industria
+  - industrial
+  - mercado
   - precios
   - salario
+  - salarios
   - empleo
+  - desempleo
+  - combustible
+  - combustibles
+  - petropar
+  - itaipu
+  - yacyreta
+  - bcp
+  - banco central
+  - mef
+  - ministerio de economia
+  - hacienda
 
 internacional:
   - mercosur

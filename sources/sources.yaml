@@ -24,8 +24,13 @@ media:
   home: https://www.ultimahora.com/
   type: prensa-tradicional
   robots_ok: true
-  feeds: []
-  status: sin-rss
+  feeds:
+  - url: https://www.ultimahora.com/economia.atom
+    ok: true
+    http_status: 200
+    entries: 12
+    fresh: true
+  status: ok
 - id: la-nacion
   name: La Nación
   home: https://www.lanacion.com.py/

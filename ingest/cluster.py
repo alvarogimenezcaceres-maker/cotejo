@@ -3,7 +3,7 @@
 Hace: calcula embeddings (título + fragmento) de las notas nuevas y las asigna al evento
 más parecido (similitud coseno al centroide, ventana de 3 días) o crea un evento nuevo.
 Recalcula qué tipos de medios cubrieron cada evento y cuáles no (punto ciego),
-y asigna la sección (politica, economia, internacional) según sources/temas.yaml.
+y asigna la sección (bolsa, economia) según sources/temas.yaml.
 No hace: no genera resúmenes, no marca eventos sensibles, no descarga texto de las notas.
 
 Uso: py ingest/cluster.py [umbral]   (por defecto 0.75)
@@ -35,7 +35,7 @@ def unit(a):
 
 
 # Migración idempotente: el esquema original no tenía la sección 'internacional'.
-TOPICS = "('politica','salud','educacion','economia','seguridad','ambiente','otros','internacional')"
+TOPICS = "('politica','salud','educacion','economia','seguridad','ambiente','otros','internacional','bolsa')"
 
 
 def main(threshold):
@@ -96,8 +96,8 @@ def main(threshold):
                 (eid,)).fetchall()
             conn.execute("UPDATE events SET covered_types=%s, missing_types=%s, topic=%s, updated_at=now() WHERE id=%s",
                          (sorted(cov), sorted(all_types - cov), temas.section(notes), eid))
-        # hechos viejos aún sin sección ('otros'): se clasifican en bloque, sin tocar updated_at
-        pend = [r[0] for r in conn.execute("SELECT id FROM events WHERE topic='otros'") if r[0] not in touched]
+        # hechos no tocados hoy: se reclasifican en bloque (así un cambio en temas.yaml se propaga), sin tocar updated_at
+        pend = [r[0] for r in conn.execute("SELECT id FROM events") if r[0] not in touched]
         notas = {}
         for eid, t, sn in conn.execute(
                 """SELECT ea.event_id, a.title, a.snippet FROM event_articles ea
@@ -106,7 +106,7 @@ def main(threshold):
         with conn.cursor() as cur:
             cur.executemany("UPDATE events SET topic=%s WHERE id=%s",
                             [(temas.section(n), eid) for eid, n in notas.items()])
-        print(f"hechos viejos clasificados: {len(notas)}")
+        print(f"hechos reclasificados: {len(notas)}")
         print(f"notas agrupadas: {joined} a eventos existentes, {new_ev} eventos nuevos")
 
 
