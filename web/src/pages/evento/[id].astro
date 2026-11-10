@@ -2,18 +2,29 @@
 import Base from '../../layouts/Base.astro';
 import { cargarEventos, fmt, TIPOS } from '../../lib/db.js';
 export async function getStaticPaths() {
-  const { eventos, tiposActivos } = await cargarEventos();
-  return eventos.map((e) => ({ params: { id: String(e.id) }, props: { e, tiposActivos } }));
+  const { eventos, comunicados, tiposActivos } = await cargarEventos();
+  return [...eventos, ...comunicados].map((e) => ({ params: { id: String(e.id) }, props: { e, tiposActivos } }));
 }
 const { e, tiposActivos } = Astro.props;
 const porMedio = new Map();
 for (const n of e.notas) (porMedio.get(n.slug) ?? porMedio.set(n.slug, []).get(n.slug)).push(n);
 const reportUrl = import.meta.env.PUBLIC_REPORT_URL;
+const descripcion = `${e.medios} ${e.medios === 1 ? 'medio' : 'medios'} y ${e.notas.length} notas sobre este hecho. Cómo lo cubrió cada uno.`;
 ---
-<Base title={`${e.title} · Cotejo`}>
+<Base title={`${e.title} · Cotejo`} description={descripcion}>
   <p><a href={`${import.meta.env.BASE_URL}/`} class="etq">← Todos los hechos</a></p>
   <h1>{e.title}</h1>
   <p class="etq">{e.medios} {e.medios === 1 ? 'medio' : 'medios'} · {e.notas.length} notas · Agrupado automáticamente</p>
+  {e.cobertura.conOrden && (
+    <>
+      <ol class="orden" aria-label="Orden de publicación">
+        {e.cobertura.medios.map((m, i) => (
+          <li><b>{m.nombre}</b> <span>{i === 0 ? 'primero' : m.lag}</span></li>
+        ))}
+      </ol>
+      <p class="nota">Orden entre las fuentes que Cotejo lee; otro medio pudo publicar antes.</p>
+    </>
+  )}
 
   {e.clasificado ? (
     <table class="registro">
@@ -27,11 +38,12 @@ const reportUrl = import.meta.env.PUBLIC_REPORT_URL;
         ))}
       </tbody>
     </table>
-  ) : (
-    <p class="aviso">La clasificación de medios está en revisión; no se muestra el punto ciego de este hecho.</p>
-  )}
+  ) : null}
 
-  <p class="aviso">Sin resumen: solo titulares y enlaces. Cada nota pertenece a su medio.</p>
+  <p class="aviso">
+    Sin resumen: solo titulares y enlaces. Cada nota pertenece a su medio.
+    {!e.clasificado && ' La clasificación de medios está en revisión, por eso no se muestra el punto ciego de este hecho.'}
+  </p>
 
   {[...porMedio.values()].map((notas) => (
     <section>
@@ -67,6 +79,12 @@ const reportUrl = import.meta.env.PUBLIC_REPORT_URL;
   h3 { margin: 0 0 .15rem; font-size: 1.1rem; line-height: 1.3; }
   article { margin-bottom: 1rem; }
   article p { margin: 0 0 .2rem; font-size: .95rem; color: var(--gris); }
+  .orden { list-style: none; margin: .7rem 0 .3rem; padding: 0; display: flex; flex-wrap: wrap; gap: .35rem .5rem; font: .78rem var(--mono); }
+  .orden li { border: 1px solid var(--regla); padding: .2rem .55rem; }
+  .orden li:first-child { border-color: var(--acento); }
+  .orden span { color: var(--gris); }
+  .orden li:first-child span { color: var(--acento); font-weight: 700; }
+  .nota { margin: .4rem 0 0; font-size: .85rem; color: var(--gris); }
   .registro { border-collapse: collapse; margin: 1rem 0; font: .85rem var(--mono); }
   .registro caption { text-align: left; padding-bottom: .4rem; }
   .registro th, .registro td { text-align: left; font-weight: 400; padding: .25rem 1.5rem .25rem 0; border-top: 1px solid var(--regla); }

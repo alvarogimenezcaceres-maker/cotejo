@@ -1,64 +1,166 @@
 ---
 import Base from '../layouts/Base.astro';
-import { cargarEventos, fmt, TIPOS, SECCIONES } from '../lib/db.js';
-const { eventos, tiposActivos } = await cargarEventos();
-const hayClasif = eventos.some((e) => e.clasificado);
+import { cargarEventos, fmt, fmtCorto, TIPOS, SECCIONES } from '../lib/db.js';
+const { portada, comunicados, tiposActivos } = await cargarEventos();
+const hayClasif = portada.some((e) => e.clasificado);
+const hero = portada[0];
+const resto = portada.slice(1);
 const secciones = Object.entries(SECCIONES)
-  .map(([clave, nombre]) => ({ clave, nombre, eventos: eventos.filter((e) => e.seccion === clave) }))
+  .map(([clave, nombre]) => ({ clave, nombre, eventos: resto.filter((e) => e.seccion === clave) }))
   .filter((s) => s.eventos.length > 0);
+const base = import.meta.env.BASE_URL;
+const recientes = comunicados.slice(0, 10);
+const anteriores = comunicados.slice(10);
+const iso = (d) => new Date(d).toISOString();
+const quienes = (e) => {
+  const n = e.cobertura.medios.map((m) => m.nombre);
+  return n.length > 3 ? `${n.slice(0, 3).join(', ')} +${n.length - 3}` : n.join(', ');
+};
+const partir = (t) => {
+  const i = t.indexOf(': ');
+  return i < 0 ? ['', t] : [t.slice(0, i), t.slice(i + 2)];
+};
+const descripcion = hero
+  ? `${hero.title}. Cómo lo cubrió cada medio y quién publicó primero.`
+  : undefined;
 ---
-<Base>
+<Base description={descripcion}>
   <p class="aviso">
-    Economía de Paraguay, con prioridad al mercado de valores. Se listan hechos cubiertos por al menos dos medios (en Mercado de valores basta uno).
-    {hayClasif
-      ? ' El registro muestra qué tipo de medio los cubrió y cuál no.'
-      : ' La clasificación de medios está en revisión: por ahora solo hay titulares y enlaces.'}
+    Economía de Paraguay con prioridad al mercado de valores. Cada hecho reúne las notas de varios medios sobre lo mismo.
+    Actualizado <time datetime={iso(new Date())} data-rel>{fmt(new Date())}</time>.
   </p>
-  <nav class="indice" aria-label="Secciones">
-    {secciones.map((s) => <a href={`#${s.clave}`}>{s.nombre} <span>{s.eventos.length}</span></a>)}
-  </nav>
-  {secciones.map((s) => (
-    <section id={s.clave}>
-      <h2 class="seccion">{s.nombre}</h2>
-      <ol class="lista">
-        {s.eventos.map((e, i) => (
-          <li>
-            <span class="num">{String(i + 1).padStart(2, '0')}</span>
-            <div>
-              <h3><a href={`${import.meta.env.BASE_URL}/evento/${e.id}/`}>{e.title}</a></h3>
-              <p class="etq">{e.medios} medios · {e.notas.length} notas · {fmt(e.fecha)}</p>
-              {e.clasificado && (
-                <p class="registro" aria-label="Cobertura por tipo de medio">
-                  {tiposActivos.map((t) => (
-                    <span class={e.cubiertos.includes(t) ? 'cub' : 'ciego'}>
-                      {e.cubiertos.includes(t) ? '■' : '□'} {TIPOS[t]}{e.cubiertos.includes(t) ? '' : ' (no lo cubrió)'}
-                    </span>
-                  ))}
+
+  <div class="pagina">
+    <div class="principal">
+      {hero && (
+        <section class="hero" aria-labelledby="hero-t">
+          <p class="etq">
+            Hecho destacado ·
+            <span title="Se ordena por cobertura (medios distintos) y frescura. Es un orden provisional, no mide impacto de mercado.">cómo se ordena ⓘ</span>
+          </p>
+          <h2 id="hero-t"><a href={`${base}/evento/${hero.id}/`}>{hero.title}</a></h2>
+          <p class="meta">
+            {hero.medios} {hero.medios === 1 ? 'medio' : 'medios'} · {hero.notas.length} notas · última nota
+            <time datetime={iso(hero.fecha)} data-rel>{fmt(hero.fecha)}</time>
+          </p>
+          {hero.cobertura.conOrden ? (
+            <>
+              <ol class="orden" aria-label="Orden de publicación">
+                {hero.cobertura.medios.map((m, i) => (
+                  <li><b>{m.nombre}</b> <span>{i === 0 ? 'primero' : m.lag}</span></li>
+                ))}
+              </ol>
+              <p class="nota">Orden entre las fuentes que Cotejo lee; otro medio pudo publicar antes.</p>
+            </>
+          ) : (
+            <p class="nota">Medios: {hero.cobertura.medios.map((m) => m.nombre).join(', ')}.</p>
+          )}
+        </section>
+      )}
+
+      {secciones.map((s) => (
+        <section id={s.clave}>
+          <h2 class="seccion">{s.nombre} <span>{s.eventos.length}</span></h2>
+          <ul class="lista">
+            {s.eventos.map((e) => (
+              <li>
+                <h3><a href={`${base}/evento/${e.id}/`}>{e.title}</a></h3>
+                <p class="meta">
+                  <time datetime={iso(e.fecha)} data-rel>{fmt(e.fecha)}</time>
+                  · {quienes(e)} · {e.notas.length} {e.notas.length === 1 ? 'nota' : 'notas'}
                 </p>
-              )}
-            </div>
-          </li>
-        ))}
-      </ol>
-    </section>
-  ))}
-  {eventos.length === 0 && <p>Todavía no hay hechos cubiertos por más de un medio.</p>}
+                {e.clasificado && (
+                  <p class="registro" aria-label="Cobertura por tipo de medio">
+                    {tiposActivos.map((t) => (
+                      <span class={e.cubiertos.includes(t) ? 'cub' : 'ciego'}>
+                        {e.cubiertos.includes(t) ? '■' : '□'} {TIPOS[t]}{e.cubiertos.includes(t) ? '' : ' (no lo cubrió)'}
+                      </span>
+                    ))}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+
+      {portada.length === 0 && <p>Todavía no hay hechos recientes con cobertura de varios medios.</p>}
+      {!hayClasif && (
+        <p class="nota">Cotejo todavía no muestra qué tipo de medio cubrió o no cada hecho: la clasificación de medios está en revisión.</p>
+      )}
+    </div>
+
+    {comunicados.length > 0 && (
+      <aside class="bva" aria-labelledby="bva-t">
+        <h2 id="bva-t" class="seccion">Comunicados de la BVA <span>{comunicados.length}</span></h2>
+        <p class="nota">Fuente primaria: la Bolsa de Valores de Asunción. Son avisos oficiales, no hechos cubiertos por la prensa.</p>
+        <ul class="com">
+          {recientes.map((e) => {
+            const [tipo, nombre] = partir(e.title);
+            return (
+              <li>
+                <time datetime={iso(e.fecha)} data-rel>{fmtCorto(e.fecha)}</time>
+                <span class="tipo">{tipo}</span>
+                <a href={e.notas[0].url} rel="noopener noreferrer">{nombre}</a>
+              </li>
+            );
+          })}
+        </ul>
+        {anteriores.length > 0 && (
+          <details>
+            <summary>Ver {anteriores.length} anteriores</summary>
+            <ul class="com">
+              {anteriores.map((e) => {
+                const [tipo, nombre] = partir(e.title);
+                return (
+                  <li>
+                    <time datetime={iso(e.fecha)} data-rel>{fmtCorto(e.fecha)}</time>
+                    <span class="tipo">{tipo}</span>
+                    <a href={e.notas[0].url} rel="noopener noreferrer">{nombre}</a>
+                  </li>
+                );
+              })}
+            </ul>
+          </details>
+        )}
+      </aside>
+    )}
+  </div>
 </Base>
 <style>
   .aviso { font-size: .9rem; }
-  .indice { display: flex; flex-wrap: wrap; gap: .5rem 1.4rem; margin: 1rem 0 .5rem; font: .8rem var(--mono); }
-  .indice a { text-decoration: none; }
-  .indice a:hover { text-decoration: underline; text-decoration-color: var(--acento); }
-  .indice span { color: var(--acento); }
-  .seccion { margin: 2rem 0 .2rem; padding-bottom: .4rem; border-bottom: 2px solid var(--tinta); font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; font-family: var(--mono); }
-  .lista { list-style: none; margin: 0; padding: 0; columns: 2 24rem; column-gap: 2.5rem; column-rule: 1px solid var(--regla); }
-  .lista li { break-inside: avoid; display: grid; grid-template-columns: 2.4rem 1fr; padding: 1rem 0; border-bottom: 1px solid var(--regla); }
-  .num { font: .8rem var(--mono); color: var(--acento); padding-top: .55rem; }
-  h3 { margin: 0 0 .3rem; font-size: 1.3rem; line-height: 1.2; font-weight: 700; }
+  .pagina { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+  @media (min-width: 62rem) { .pagina { grid-template-columns: minmax(0, 1fr) 19rem; align-items: start; } }
+
+  .hero { border-top: 3px solid var(--tinta); padding: .9rem 0 1.2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--regla); }
+  .hero h2 { margin: .35rem 0 .5rem; font-size: clamp(1.7rem, 4.2vw, 2.6rem); line-height: 1.1; letter-spacing: -.02em; }
+  .hero h2 a { text-decoration: none; }
+  .hero h2 a:hover { text-decoration: underline; text-decoration-color: var(--acento); }
+  .orden { list-style: none; margin: .7rem 0 .3rem; padding: 0; display: flex; flex-wrap: wrap; gap: .35rem .5rem; font: .78rem var(--mono); }
+  .orden li { border: 1px solid var(--regla); padding: .2rem .55rem; }
+  .orden li:first-child { border-color: var(--acento); }
+  .orden span { color: var(--gris); }
+  .orden li:first-child span { color: var(--acento); font-weight: 700; }
+
+  .seccion { margin: 1.6rem 0 .2rem; padding-bottom: .4rem; border-bottom: 2px solid var(--tinta); font: .85rem var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+  .seccion span { color: var(--acento); }
+  .lista { list-style: none; margin: 0; padding: 0; }
+  .lista li { padding: .9rem 0; border-bottom: 1px solid var(--regla); }
+  h3 { margin: 0 0 .25rem; font-size: 1.25rem; line-height: 1.22; font-weight: 700; }
   h3 a { text-decoration: none; }
   h3 a:hover { text-decoration: underline; text-decoration-color: var(--acento); }
-  .etq { margin: 0; }
+  .meta { margin: 0; font: .78rem/1.4 var(--mono); color: var(--gris); }
+  .nota { margin: .4rem 0 0; font-size: .85rem; color: var(--gris); }
   .registro { margin: .5rem 0 0; display: flex; flex-wrap: wrap; gap: .15rem .9rem; font: .75rem var(--mono); }
   .cub { color: var(--tinta); }
   .ciego { color: var(--acento); }
+
+  .bva { min-width: 0; }
+  .bva .seccion { margin-top: 0; }
+  .com { list-style: none; margin: .4rem 0 0; padding: 0; font-size: .9rem; }
+  .com li { padding: .45rem 0; border-bottom: 1px solid var(--regla); display: grid; grid-template-columns: 4.2rem 1fr; gap: 0 .5rem; line-height: 1.3; }
+  .com time { grid-row: span 2; font: .72rem var(--mono); color: var(--gris); padding-top: .15rem; }
+  .com .tipo { font: .68rem var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--gris); }
+  summary { cursor: pointer; margin: .7rem 0; font: .8rem var(--mono); color: var(--acento); }
+  summary:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
 </style>

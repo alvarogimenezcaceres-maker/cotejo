@@ -1,5 +1,9 @@
 ---
-const { title = 'Cotejo' } = Astro.props;
+const {
+  title = 'Cotejo',
+  description = 'Cómo cubrió cada medio de Paraguay un mismo hecho de economía y mercado de valores, y quién no lo cubrió.',
+} = Astro.props;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 ---
 <!doctype html>
 <html lang="es">
@@ -7,7 +11,16 @@ const { title = 'Cotejo' } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
-    <meta name="description" content="Cómo cubrió cada medio de Paraguay un mismo hecho de economía y mercado de valores, y quién no lo cubrió." />
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:site_name" content="Cotejo" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_PY" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23b2331d'/%3E%3Ctext x='16' y='23' font-size='22' text-anchor='middle' fill='%23f3efe4' font-family='Georgia,serif' font-weight='700'%3EC%3C/text%3E%3C/svg%3E" />
   </head>
   <body>
     <header class="mast">
@@ -19,6 +32,20 @@ const { title = 'Cotejo' } = Astro.props;
       <p>Cotejo guarda solo titular, un fragmento breve, enlace y fecha. El texto completo está en cada medio.
       La agrupación por hecho es automática y puede equivocarse. Código abierto (AGPL-3.0).</p>
     </footer>
+    <script is:inline>
+      // Fechas relativas ("hace 3 h"). Sin JavaScript se queda la fecha completa.
+      document.querySelectorAll('time[data-rel]').forEach(function (t) {
+        var ms = Date.now() - new Date(t.getAttribute('datetime')).getTime();
+        var s;
+        if (ms < 0) return;
+        if (ms < 6e4) s = 'justo ahora';
+        else if (ms < 36e5) s = 'hace ' + Math.round(ms / 6e4) + ' min';
+        else if (ms < 864e5) s = 'hace ' + Math.round(ms / 36e5) + ' h';
+        else if (ms < 6048e5) s = 'hace ' + Math.round(ms / 864e5) + ' d';
+        else return;
+        t.textContent = s;
+      });
+    </script>
   </body>
 </html>
 <style is:global>
