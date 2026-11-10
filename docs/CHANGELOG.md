@@ -28,3 +28,4 @@
 - 2026-11-10: Fase 7: espacios en fechas relativas y orden de portada con peso de volumen de notas (ver decisiones).
 - 2026-11-10: Rediseño visual del sitio: sistema de diseño nuevo (tokens de color claro/oscuro con azul tinta como acento y verde/rojo solo semánticos; serif para titulares y sans del sistema con cifras tabulares para datos; sin fuentes externas), cabecera fija con navegación, tarjetas, hecho destacado con línea de tiempo por medio (componente Carriles) y pista mínima en cada fila, página de evento con la misma línea de tiempo, pie con aviso legal y enlaces a metodología y código.
 - 2026-11-10: Rediseño: en móvil la cabecera deja de ser fija y el menú pasa a una sola línea desplazable; las horas no se parten en dos líneas.
+- 2026-11-10: Rediseño: las fechas del eje de la línea de tiempo no se parten en dos líneas.
